@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPI Consulting — Dashboard Analítico</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --surface2: #1a2235;
+  --border: #2a3548;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --accent: #38bdf8;
+  --accent2: #818cf8;
+  --accent3: #f472b6;
+  --accent4: #34d399;
+  --accent5: #fb923c;
+  --danger: #ef4444;
+  --gold: #fbbf24;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+.header {
+  padding: 2rem 3rem 1.5rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  border-bottom: 1px solid var(--border);
+}
+.header h1 { font-family:'Space Mono',monospace; font-size:1.6rem; letter-spacing:-0.5px; }
+.header h1 span { color: var(--accent); }
+.header p { color:var(--text2); margin-top:0.3rem; font-size:0.9rem; }
+
+.tabs {
+  display:flex; gap:0; padding:0 3rem; background:var(--surface);
+  border-bottom:1px solid var(--border); overflow-x:auto;
+}
+.tab {
+  padding:0.9rem 1.4rem; cursor:pointer; font-size:0.82rem; font-weight:500;
+  color:var(--text2); border-bottom:2px solid transparent; white-space:nowrap;
+  transition: all 0.2s;
+}
+.tab:hover { color:var(--text); background:var(--surface2); }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.tab .tag {
+  display:inline-block; font-family:'Space Mono',monospace; font-size:0.65rem;
+  padding:0.15rem 0.4rem; border-radius:3px; margin-right:0.4rem;
+  background:var(--accent); color:var(--bg); font-weight:700;
+}
+
+.panel { display:none; padding:2rem 3rem; }
+.panel.active { display:block; }
+
+.panel-header { margin-bottom:1.5rem; }
+.panel-header h2 { font-size:1.3rem; font-weight:700; margin-bottom:0.3rem; }
+.panel-header p { color:var(--text2); font-size:0.85rem; line-height:1.5; }
+
+.chart-container {
+  background: var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1.5rem;
+  position:relative;
+}
+
+.tooltip {
+  position:absolute; pointer-events:none; background:#1e293b; border:1px solid var(--border);
+  padding:0.6rem 0.8rem; border-radius:8px; font-size:0.78rem; z-index:100;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4); display:none; max-width:220px;
+}
+.tooltip .tt-title { font-weight:700; color:var(--accent); margin-bottom:0.2rem; }
+.tooltip .tt-row { color:var(--text2); }
+.tooltip .tt-val { color:var(--text); font-weight:500; }
+
+svg text { font-family:'DM Sans',sans-serif; }
+
+.legend { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem; padding:0.5rem 0; }
+.legend-item { display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:var(--text2); cursor:pointer; }
+.legend-dot { width:10px; height:10px; border-radius:50%; }
+
+.filters {
+  display:flex; gap:1rem; margin-bottom:1.2rem; flex-wrap:wrap; align-items:center;
+}
+.filter-label { font-size:0.78rem; color:var(--text2); }
+.filter-select {
+  background:var(--surface2); border:1px solid var(--border); color:var(--text);
+  padding:0.4rem 0.7rem; border-radius:6px; font-size:0.8rem; font-family:'DM Sans';
+}
+.filter-btn {
+  background:var(--surface2); border:1px solid var(--border); color:var(--text2);
+  padding:0.35rem 0.8rem; border-radius:6px; font-size:0.78rem; cursor:pointer;
+  font-family:'DM Sans'; transition:all 0.15s;
+}
+.filter-btn:hover, .filter-btn.active { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+
+.stats-row { display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.stat-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:1rem 1.2rem; flex:1; min-width:150px;
+}
+.stat-card .stat-label { font-size:0.72rem; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; }
+.stat-card .stat-value { font-family:'Space Mono'; font-size:1.4rem; font-weight:700; margin-top:0.2rem; }
+.stat-card .stat-sub { font-size:0.72rem; color:var(--text2); margin-top:0.1rem; }
+
+.insight-box {
+  background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(129,140,248,0.08));
+  border:1px solid rgba(56,189,248,0.2);
+  border-radius:10px; padding:1rem 1.2rem; margin-top:1.2rem;
+  font-size:0.83rem; color:var(--text2); line-height:1.6;
+}
+.insight-box strong { color:var(--accent); }
+
+@media(max-width:768px) {
+  .header, .panel { padding:1rem 1.2rem; }
+  .tabs { padding:0 1rem; }
+  .stats-row { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>GPI</span> Consulting — Dashboard Analítico</h1>
+  <p>Paz · Felicidad · Desempeño Olímpico — Periodo 2015 a 2019</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="0">Descripción</div>
+  <div class="tab" data-tab="1">Objetivo General</div>
+  <div class="tab" data-tab="2"><span class="tag">T1</span>Tendencias · <span class="tag">T2</span>Paz</div>
+  <div class="tab" data-tab="3"><span class="tag">T3</span>GDP · <span class="tag">T4</span>Outliers · <span class="tag">T5</span>Perfiles</div>
+</div>
+
+<!-- PANEL 0: DESCRIPCIÓN -->
+<div class="panel active" id="panel-0">
+  <div style="max-width:900px; margin:0 auto; padding: 1rem 0;">
+    <h2 style="font-size:1.4rem; margin-bottom:1rem; color:var(--accent)">Global Policy Insights</h2>
+    <p style="color:var(--text2); line-height:1.8; margin-bottom:1.2rem; font-size:0.92rem">
+      Global Policy Insights es una consultora especializada en el análisis de datos para la formulación de política pública. Su trabajo consiste en transformar grandes volúmenes de información en recomendaciones concretas para gobiernos e instituciones internacionales. Para este proyecto, la empresa analiza la relación entre tres dimensiones del desarrollo de un país: la paz, el bienestar subjetivo de sus ciudadanos y el desempeño de sus atletas en los Juegos Olímpicos.
+    </p>
+    <p style="color:var(--text2); line-height:1.8; margin-bottom:2rem; font-size:0.92rem">
+      Los usuarios principales de este dashboard son analistas de política pública y directores de proyectos en entidades gubernamentales. Los analistas acceden a correlaciones y tendencias sin depender de un colega para cada consulta. Los directores obtienen una vista de alto nivel que les permite identificar qué países priorizar para ofrecer consultoría especializada.
+    </p>
+
+    <h3 style="font-size:1.1rem; margin-bottom:0.8rem; color:var(--accent2)">Fuentes de datos</h3>
+    <div class="stats-row" style="margin-bottom:2rem">
+      <div class="stat-card">
+        <div class="stat-label" style="color:var(--accent)">World Happiness Report</div>
+        <div class="stat-value" style="font-size:1rem; margin-top:0.4rem; color:var(--text)">782 registros</div>
+        <div class="stat-sub">Sustainable Development Solutions Network. Kaggle, 2015 a 2019. Incluye Happiness Score, GDP per Cápita, Libertad y Corrupción por país y año.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" style="color:var(--accent3)">Global Peace Index</div>
+        <div class="stat-value" style="font-size:1rem; margin-top:0.4rem; color:var(--text)">815 registros</div>
+        <div class="stat-sub">Institute for Economics and Peace. Kaggle, 2015 a 2019. Incluye Overall Peace Score y componente Militar por país y año.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" style="color:var(--accent4)">Olympic Games Medals</div>
+        <div class="stat-value" style="font-size:1rem; margin-top:0.4rem; color:var(--text)">11.379 registros</div>
+        <div class="stat-sub">Fomenko, P. Kaggle, 2022. Resultados olímpicos de Rio 2016 y PyeongChang 2018 con medalla, país, atleta y disciplina.</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem; margin-bottom:0.8rem; color:var(--accent2)">Variables clave</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; margin-bottom:2rem">
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.9rem">
+        <div style="color:var(--accent); font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem">Paz</div>
+        <div style="color:var(--text2); font-size:0.82rem; line-height:1.6">Overall Peace Score: valor compuesto donde un puntaje más bajo indica mayor paz. Rango aproximado de 1.0 a 3.5 en el periodo analizado.</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.9rem">
+        <div style="color:var(--accent3); font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem">Felicidad</div>
+        <div style="color:var(--text2); font-size:0.82rem; line-height:1.6">Happiness Score: autoreporte de bienestar subjetivo en escala de 0 a 10. Basado en la pregunta Cantril Ladder de la encuesta Gallup World Poll.</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.9rem">
+        <div style="color:var(--accent4); font-size:0.75rem; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem">Desempeño Olímpico</div>
+        <div style="color:var(--text2); font-size:0.82rem; line-height:1.6">Total de medallas obtenidas por país en los Juegos Olímpicos de verano e invierno celebrados entre 2015 y 2019.</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem; margin-bottom:0.8rem; color:var(--accent2)">Objetivos del proyecto</h3>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem; margin-bottom:0.6rem">
+      <span style="color:var(--accent); font-weight:700; font-size:0.8rem">OBJETIVO GENERAL</span>
+      <p style="color:var(--text2); font-size:0.87rem; line-height:1.6; margin-top:0.3rem">Analizar la relación entre los niveles de paz, bienestar subjetivo y desempeño deportivo internacional de los países en el periodo 2015 a 2019, con el fin de identificar perfiles nacionales que permitan orientar recomendaciones de política pública.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem">
+      <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:0.8rem">
+        <span style="color:var(--accent2); font-weight:700; font-size:0.75rem">OE1</span>
+        <p style="color:var(--text2); font-size:0.82rem; line-height:1.5; margin-top:0.2rem">Identificar la tendencia temporal del Happiness Score por región geográfica entre 2015 y 2019.</p>
+      </div>
+      <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:0.8rem">
+        <span style="color:var(--accent2); font-weight:700; font-size:0.75rem">OE2</span>
+        <p style="color:var(--text2); font-size:0.82rem; line-height:1.5; margin-top:0.2rem">Comparar la distribución del Overall Peace Score entre países medallistas y no medallistas.</p>
+      </div>
+      <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:0.8rem">
+        <span style="color:var(--accent2); font-weight:700; font-size:0.75rem">OE3</span>
+        <p style="color:var(--text2); font-size:0.82rem; line-height:1.5; margin-top:0.2rem">Comparar el GDP per cápita con el total de medallas olímpicas por país para evaluar si la riqueza económica predice el rendimiento deportivo.</p>
+      </div>
+      <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:0.8rem">
+        <span style="color:var(--accent2); font-weight:700; font-size:0.75rem">OE4</span>
+        <p style="color:var(--text2); font-size:0.82rem; line-height:1.5; margin-top:0.2rem">Identificar países atípicos que combinan alto conflicto con alta felicidad, o alta paz con baja felicidad.</p>
+      </div>
+      <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:0.8rem; grid-column:span 2">
+        <span style="color:var(--accent2); font-weight:700; font-size:0.75rem">OE5</span>
+        <p style="color:var(--text2); font-size:0.82rem; line-height:1.5; margin-top:0.2rem">Resumir el perfil multidimensional de los 10 países con más medallas olímpicas en términos de paz, felicidad, GDP y libertad.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 1: OBJETIVO GENERAL -->
+<div class="panel" id="panel-1">
+  <div class="panel-header">
+    <h2>Objetivo General: Relación entre Paz, Felicidad y Desempeño Olímpico</h2>
+    <p>Regiones ordenadas de mejor a peor perfil compuesto. Cada punto representa el desempeño relativo de esa región en felicidad, paz y medallas olímpicas, normalizado entre 0 y 100%. La línea conecta el valor más bajo con el más alto de esa región, mostrando la amplitud del perfil.</p>
+  </div>
+  <div class="filters" id="obj-filters">
+    <span class="filter-label">Ordenar por</span>
+    <button class="filter-btn active" onclick="objSort('composite',this)">Índice compuesto</button>
+    <button class="filter-btn" onclick="objSort('happiness',this)">Felicidad</button>
+    <button class="filter-btn" onclick="objSort('peace',this)">Paz</button>
+    <button class="filter-btn" onclick="objSort('medals',this)">Medallas</button>
+    <span class="filter-label" style="margin-left:1rem">Destacar</span>
+    <button class="filter-btn active" data-hl="all" onclick="objHighlight('all',this)">Todos</button>
+    <button class="filter-btn" data-hl="happiness" onclick="objHighlight('happiness',this)">Felicidad</button>
+    <button class="filter-btn" data-hl="peace" onclick="objHighlight('peace',this)">Paz</button>
+    <button class="filter-btn" data-hl="medals" onclick="objHighlight('medals',this)">Medallas</button>
+    <span class="filter-label" style="margin-left:1rem">Mostrar</span>
+    <select class="filter-select" id="obj-topn" onchange="drawObj()">
+      <option value="11">Todas las regiones</option>
+      <option value="8">Top 8</option>
+      <option value="5">Top 5</option>
+    </select>
+  </div>
+  <div class="chart-container">
+    <svg id="chart-obj" width="100%" height="460"></svg>
+    <div class="tooltip" id="tip-obj"></div>
+    <div class="legend" id="legend-obj"></div>
+  </div>
+  <div class="insight-box">
+    <strong>Insight:</strong> Europa Occidental lidera en las tres dimensiones con el perfil más equilibrado del grupo. Norte América sobresale en medallas totales pero su índice de paz es moderado. Oceanía destaca por alta felicidad y alta paz, aunque con volumen de medallas limitado por su número de países. Asia Oriental demuestra que el alto rendimiento deportivo no requiere alta felicidad. El CIS presenta el perfil más desequilibrado con amplias brechas entre sus tres variables.
+  </div>
+</div>
+
+<!-- PANEL 2: T1 + T2 -->
+<div class="panel" id="panel-2">
+  <div class="panel-header">
+    <h2>OE1 y OE2: Tendencias de Felicidad y Distribución de Paz</h2>
+    <p>Izquierda: evolución del Happiness Score promedio por región geográfica entre 2015 y 2019. Derecha: distribución del Overall Peace Score comparando países que obtuvieron medallas olímpicas y los que no.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem">
+    <div>
+      <div class="chart-container">
+        <svg id="chart-t1" width="100%" height="380"></svg>
+        <div class="tooltip" id="tip-t1"></div>
+        <div class="legend" id="legend-t1"></div>
+      </div>
+    </div>
+    <div>
+      <div class="filters" style="margin-bottom:0.6rem">
+        <span class="filter-label">Comparar grupos</span>
+        <button class="filter-btn active" data-grp="both" onclick="p2Group('both',this)">Ambos grupos</button>
+        <button class="filter-btn" data-grp="medals" onclick="p2Group('medals',this)">Solo medallistas</button>
+        <button class="filter-btn" data-grp="nomedals" onclick="p2Group('nomedals',this)">Solo no medallistas</button>
+      </div>
+      <div class="stats-row" id="t2-stats"></div>
+      <div class="chart-container">
+        <svg id="chart-t2" width="100%" height="380"></svg>
+        <div class="tooltip" id="tip-t2"></div>
+      </div>
+    </div>
+  </div>
+  <div class="insight-box" style="margin-top:1rem">
+    <strong>Insight OE1:</strong> Norteamérica y Oceanía lideran consistentemente en felicidad. América Latina muestra tendencia decreciente durante el periodo.
+    <br><strong>Insight OE2:</strong> Los países medallistas tienen una mediana de paz de 1.893, frente a 2.032 de los no medallistas, lo que sugiere que los países más pacíficos tienden a rendir mejor olímpicamente.
+  </div>
+</div>
+
+<!-- PANEL 3: T3 + T4 + T5 -->
+<div class="panel" id="panel-3">
+  <div class="panel-header">
+    <h2>OE3, OE4 y OE5: GDP, Outliers y Perfiles Multidimensionales</h2>
+  </div>
+
+  <div style="margin-bottom:2rem">
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:0.5rem">OE3: GDP per Cápita vs Medallas Olímpicas</h3>
+    <p style="color:var(--text2); font-size:0.83rem; margin-bottom:0.8rem">Países ordenados por GDP per cápita. La altura del lollipop representa el total de medallas y el color refleja el Happiness Score.</p>
+    <div class="filters" style="margin-bottom:0.6rem">
+      <span class="filter-label">Cuartil GDP</span>
+      <select class="filter-select" id="p3-gdp" onchange="drawT3()">
+        <option value="all">Todos</option>
+        <option value="0">GDP Bajo</option>
+        <option value="1">GDP Medio-Bajo</option>
+        <option value="2">GDP Medio-Alto</option>
+        <option value="3">GDP Alto</option>
+      </select>
+      <span class="filter-label" style="margin-left:1rem">Medallas mínimas</span>
+      <button class="filter-btn active" data-min="0"  onclick="p3MinMed(0,this)">Todos</button>
+      <button class="filter-btn" data-min="5"  onclick="p3MinMed(5,this)">5+</button>
+      <button class="filter-btn" data-min="10" onclick="p3MinMed(10,this)">10+</button>
+      <button class="filter-btn" data-min="30" onclick="p3MinMed(30,this)">30+</button>
+    </div>
+    <div class="chart-container">
+      <svg id="chart-t3" width="100%" height="380"></svg>
+      <div class="tooltip" id="tip-t3"></div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem">
+    <div>
+      <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:0.5rem">OE4: Países Atípicos, Felicidad vs Paz</h3>
+      <p style="color:var(--text2); font-size:0.83rem; margin-bottom:0.8rem">Cuadrantes divididos por las medianas. Superior izquierdo: alta felicidad y alta paz.</p>
+      <div class="filters" style="margin-bottom:0.6rem">
+        <span class="filter-label">Filtrar por región</span>
+        <select class="filter-select" id="p3-region" onchange="drawT4()">
+          <option value="all">Todas las regiones</option>
+          <option>Western Europe</option>
+          <option>North America</option>
+          <option>Latin America</option>
+          <option>Eastern Asia</option>
+          <option>CIS</option>
+          <option>Middle East/N. Africa</option>
+          <option>Sub-Saharan Africa</option>
+          <option>Southeast Asia</option>
+          <option>Southern Asia</option>
+          <option>Oceania</option>
+          <option>Central/Eastern Europe</option>
+        </select>
+      </div>
+      <div class="chart-container">
+        <svg id="chart-t4" width="100%" height="420"></svg>
+        <div class="tooltip" id="tip-t4"></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:0.5rem">OE5: Perfil Multidimensional Top 10</h3>
+      <p style="color:var(--text2); font-size:0.83rem; margin-bottom:0.8rem">Compara los 10 países con más medallas en 5 dimensiones. Selecciona países para comparar.</p>
+      <div class="filters" id="t5-filters"></div>
+      <div class="chart-container">
+        <svg id="chart-t5" width="100%" height="420"></svg>
+        <div class="tooltip" id="tip-t5"></div>
+        <div class="legend" id="legend-t5"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <strong>Insight OE3:</strong> Los países de mayor GDP concentran más medallas, aunque Kenya y Etiopía son excepciones notables.
+    <br><strong>Insight OE4:</strong> Israel y Colombia son felices a pesar de sus altos índices de conflicto. Japón y Singapur son muy pacíficos pero reportan felicidad moderada.
+    <br><strong>Insight OE5:</strong> Noruega y Canadá son los perfiles más equilibrados del top 10.
+  </div>
+</div>
+
+<script>
+const T1_DATA = [{"Region": "CIS", "Year": 2015, "s": 5.286333333333333}, {"Region": "CIS", "Year": 2016, "s": 5.293916666666667}, {"Region": "CIS", "Year": 2017, "s": 5.251583298047384}, {"Region": "CIS", "Year": 2018, "s": 5.229166666666667}, {"Region": "CIS", "Year": 2019, "s": 5.256333333333333}, {"Region": "Central/Eastern Europe", "Year": 2015, "s": 5.38825}, {"Region": "Central/Eastern Europe", "Year": 2016, "s": 5.443875}, {"Region": "Central/Eastern Europe", "Year": 2017, "s": 5.543375015258789}, {"Region": "Central/Eastern Europe", "Year": 2018, "s": 5.6575}, {"Region": "Central/Eastern Europe", "Year": 2019, "s": 5.776941176470588}, {"Region": "Eastern Asia", "Year": 2015, "s": 5.626166666666666}, {"Region": "Eastern Asia", "Year": 2016, "s": 5.6241666666666665}, {"Region": "Eastern Asia", "Year": 2017, "s": 5.4964998960495}, {"Region": "Eastern Asia", "Year": 2018, "s": 5.672}, {"Region": "Eastern Asia", "Year": 2019, "s": 5.688833333333332}, {"Region": "Latin America", "Year": 2015, "s": 6.138761904761904}, {"Region": "Latin America", "Year": 2016, "s": 6.056095238095238}, {"Region": "Latin America", "Year": 2017, "s": 5.957904781614031}, {"Region": "Latin America", "Year": 2018, "s": 5.937749999999999}, {"Region": "Latin America", "Year": 2019, "s": 5.94255}, {"Region": "Middle East/N. Africa", "Year": 2015, "s": 5.341941176470589}, {"Region": "Middle East/N. Africa", "Year": 2016, "s": 5.3078125}, {"Region": "Middle East/N. Africa", "Year": 2017, "s": 5.283499985933303}, {"Region": "Middle East/N. Africa", "Year": 2018, "s": 5.20825}, {"Region": "Middle East/N. Africa", "Year": 2019, "s": 5.1434375}, {"Region": "North America", "Year": 2015, "s": 7.273}, {"Region": "North America", "Year": 2016, "s": 7.254}, {"Region": "North America", "Year": 2017, "s": 7.1545000076293945}, {"Region": "North America", "Year": 2018, "s": 7.107}, {"Region": "North America", "Year": 2019, "s": 7.085}, {"Region": "Oceania", "Year": 2015, "s": 7.285}, {"Region": "Oceania", "Year": 2016, "s": 7.323499999999999}, {"Region": "Oceania", "Year": 2017, "s": 7.299000024795535}, {"Region": "Oceania", "Year": 2018, "s": 7.298}, {"Region": "Oceania", "Year": 2019, "s": 7.2675}, {"Region": "Southeast Asia", "Year": 2015, "s": 5.311}, {"Region": "Southeast Asia", "Year": 2016, "s": 5.3246}, {"Region": "Southeast Asia", "Year": 2017, "s": 5.396666685740152}, {"Region": "Southeast Asia", "Year": 2018, "s": 5.2903}, {"Region": "Southeast Asia", "Year": 2019, "s": 5.2545}, {"Region": "Southern Asia", "Year": 2015, "s": 4.468833333333333}, {"Region": "Southern Asia", "Year": 2016, "s": 4.457833333333333}, {"Region": "Southern Asia", "Year": 2017, "s": 4.564666628837585}, {"Region": "Southern Asia", "Year": 2018, "s": 4.524166666666667}, {"Region": "Southern Asia", "Year": 2019, "s": 4.434333333333333}, {"Region": "Sub-Saharan Africa", "Year": 2015, "s": 4.1593333333333335}, {"Region": "Sub-Saharan Africa", "Year": 2016, "s": 4.132774193548387}, {"Region": "Sub-Saharan Africa", "Year": 2017, "s": 4.125939398100881}, {"Region": "Sub-Saharan Africa", "Year": 2018, "s": 4.1893939393939394}, {"Region": "Sub-Saharan Africa", "Year": 2019, "s": 4.2792903225806445}, {"Region": "Western Europe", "Year": 2015, "s": 6.765}, {"Region": "Western Europe", "Year": 2016, "s": 6.756904761904762}, {"Region": "Western Europe", "Year": 2017, "s": 6.770523820604598}, {"Region": "Western Europe", "Year": 2018, "s": 6.828380952380952}, {"Region": "Western Europe", "Year": 2019, "s": 6.909857142857143}];
+const T2_SUMMARY = {"Con medallas": {"min": 1.266, "q1": 1.533, "median": 1.893, "q3": 2.19, "max": 3.011, "mean": 1.892, "count": 77}, "Sin medallas": {"min": 1.127, "q1": 1.859, "median": 2.032, "q3": 2.239, "max": 3.406, "mean": 2.139, "count": 86}};
+const T3_DATA = [{"c": "Algeria", "g": 1.013, "m": 2, "h": 5.668}, {"c": "Argentina", "g": 1.111, "m": 4, "h": 6.459}, {"c": "Armenia", "g": 0.839, "m": 4, "h": 4.393}, {"c": "Australia", "g": 1.395, "m": 32, "h": 7.276}, {"c": "Austria", "g": 1.398, "m": 15, "h": 7.142}, {"c": "Azerbaijan", "g": 1.074, "m": 18, "h": 5.229}, {"c": "Bahrain", "g": 1.39, "m": 2, "h": 6.114}, {"c": "Belarus", "g": 1.085, "m": 12, "h": 5.598}, {"c": "Belgium", "g": 1.375, "m": 7, "h": 6.921}, {"c": "Brazil", "g": 1.033, "m": 19, "h": 6.658}, {"c": "Bulgaria", "g": 1.087, "m": 3, "h": 4.619}, {"c": "Burundi", "g": 0.062, "m": 1, "h": 3.079}, {"c": "Canada", "g": 1.388, "m": 51, "h": 7.351}, {"c": "Colombia", "g": 0.993, "m": 8, "h": 6.34}, {"c": "Croatia", "g": 1.152, "m": 10, "h": 5.459}, {"c": "Czech Republic", "g": 1.269, "m": 17, "h": 6.655}, {"c": "Denmark", "g": 1.397, "m": 15, "h": 7.546}, {"c": "Dominican Republic", "g": 1.0, "m": 1, "h": 5.199}, {"c": "Egypt", "g": 0.925, "m": 3, "h": 4.375}, {"c": "Estonia", "g": 1.238, "m": 1, "h": 5.638}, {"c": "Ethiopia", "g": 0.293, "m": 8, "h": 4.423}, {"c": "Finland", "g": 1.357, "m": 7, "h": 7.538}, {"c": "France", "g": 1.344, "m": 57, "h": 6.515}, {"c": "Georgia", "g": 0.854, "m": 7, "h": 4.339}, {"c": "Germany", "g": 1.395, "m": 73, "h": 6.929}, {"c": "United Kingdom", "g": 1.338, "m": 72, "h": 6.91}, {"c": "Greece", "g": 1.205, "m": 6, "h": 5.152}, {"c": "Hungary", "g": 1.204, "m": 16, "h": 5.329}, {"c": "India", "g": 0.731, "m": 2, "h": 4.298}, {"c": "Indonesia", "g": 0.921, "m": 3, "h": 5.252}, {"c": "Ireland", "g": 1.46, "m": 2, "h": 6.964}, {"c": "Israel", "g": 1.304, "m": 2, "h": 7.142}, {"c": "Italy", "g": 1.312, "m": 38, "h": 6.022}, {"c": "Ivory Coast", "g": 0.547, "m": 2, "h": 4.273}, {"c": "Jamaica", "g": 0.856, "m": 11, "h": 5.662}, {"c": "Japan", "g": 1.338, "m": 54, "h": 5.926}, {"c": "Jordan", "g": 0.91, "m": 1, "h": 5.18}, {"c": "Kazakhstan", "g": 1.191, "m": 19, "h": 5.838}, {"c": "Kenya", "g": 0.491, "m": 13, "h": 4.449}, {"c": "Kosovo", "g": 0.878, "m": 1, "h": 5.606}, {"c": "Latvia", "g": 1.185, "m": 1, "h": 5.676}, {"c": "Lithuania", "g": 1.233, "m": 4, "h": 5.93}, {"c": "Malaysia", "g": 1.21, "m": 5, "h": 5.904}, {"c": "Mexico", "g": 1.079, "m": 5, "h": 6.725}, {"c": "Mongolia", "g": 0.941, "m": 2, "h": 5.029}, {"c": "Morocco", "g": 0.807, "m": 1, "h": 5.172}, {"c": "Netherlands", "g": 1.411, "m": 39, "h": 7.405}, {"c": "New Zealand", "g": 1.318, "m": 20, "h": 7.313}, {"c": "Niger", "g": 0.127, "m": 1, "h": 4.105}, {"c": "Nigeria", "g": 0.715, "m": 1, "h": 5.127}, {"c": "Norway", "g": 1.519, "m": 43, "h": 7.541}, {"c": "China", "g": 1.003, "m": 79, "h": 5.219}, {"c": "Philippines", "g": 0.791, "m": 1, "h": 5.387}, {"c": "Poland", "g": 1.209, "m": 13, "h": 5.981}, {"c": "Portugal", "g": 1.232, "m": 1, "h": 5.305}, {"c": "Puerto Rico", "g": 1.359, "m": 1, "h": 7.039}, {"c": "Qatar", "g": 1.744, "m": 1, "h": 6.422}, {"c": "South Korea", "g": 1.315, "m": 38, "h": 5.885}, {"c": "Romania", "g": 1.142, "m": 4, "h": 5.698}, {"c": "Russia", "g": 1.197, "m": 56, "h": 5.799}, {"c": "Serbia", "g": 1.001, "m": 8, "h": 5.339}, {"c": "Singapore", "g": 1.592, "m": 1, "h": 6.543}, {"c": "Slovakia", "g": 1.246, "m": 7, "h": 6.108}, {"c": "Slovenia", "g": 1.261, "m": 6, "h": 5.888}, {"c": "South Africa", "g": 0.98, "m": 10, "h": 4.675}, {"c": "Spain", "g": 1.299, "m": 19, "h": 6.351}, {"c": "Sweden", "g": 1.404, "m": 25, "h": 7.319}, {"c": "Switzerland", "g": 1.472, "m": 22, "h": 7.511}, {"c": "Tajikistan", "g": 0.474, "m": 1, "h": 5.098}, {"c": "Thailand", "g": 1.05, "m": 6, "h": 6.287}, {"c": "Trinidad and Tobago", "g": 1.3, "m": 1, "h": 6.168}, {"c": "Tunisia", "g": 0.937, "m": 3, "h": 4.728}, {"c": "Turkey", "g": 1.151, "m": 8, "h": 5.415}, {"c": "Ukraine", "g": 0.836, "m": 12, "h": 4.307}, {"c": "United Arab Emirates", "g": 1.645, "m": 1, "h": 6.744}, {"c": "United States", "g": 1.456, "m": 144, "h": 6.999}, {"c": "Uzbekistan", "g": 0.724, "m": 13, "h": 6.046}, {"c": "Venezuela", "g": 1.052, "m": 3, "h": 5.531}, {"c": "Vietnam", "g": 0.723, "m": 2, "h": 5.155}];
+const T4_DATA = [{"c": "Afghanistan", "h": 3.513, "p": 3.406}, {"c": "Argentina", "h": 6.459, "p": 1.942}, {"c": "Australia", "h": 7.276, "p": 1.412}, {"c": "Austria", "h": 7.142, "p": 1.266}, {"c": "Bangladesh", "h": 4.58, "p": 1.995}, {"c": "Belgium", "h": 6.921, "p": 1.481}, {"c": "Bolivia", "h": 5.813, "p": 1.951}, {"c": "Brazil", "h": 6.658, "p": 2.208}, {"c": "Burundi", "h": 3.079, "p": 2.474}, {"c": "Cambodia", "h": 4.205, "p": 2.05}, {"c": "Canada", "h": 7.351, "p": 1.324}, {"c": "Central African Republic", "h": 3.134, "p": 3.073}, {"c": "Chile", "h": 6.589, "p": 1.604}, {"c": "China", "h": 5.219, "p": 2.077}, {"c": "Colombia", "h": 6.34, "p": 2.636}, {"c": "Costa Rica", "h": 7.126, "p": 1.712}, {"c": "Czech Republic", "h": 6.655, "p": 1.346}, {"c": "Denmark", "h": 7.546, "p": 1.276}, {"c": "Egypt", "h": 4.375, "p": 2.383}, {"c": "El Salvador", "h": 6.124, "p": 2.188}, {"c": "Finland", "h": 7.538, "p": 1.397}, {"c": "France", "h": 6.515, "p": 1.838}, {"c": "Germany", "h": 6.929, "p": 1.472}, {"c": "Guatemala", "h": 6.344, "p": 2.127}, {"c": "Honduras", "h": 5.241, "p": 2.133}, {"c": "Hungary", "h": 5.329, "p": 1.533}, {"c": "Iceland", "h": 7.511, "p": 1.127}, {"c": "India", "h": 4.298, "p": 2.356}, {"c": "Indonesia", "h": 5.252, "p": 1.706}, {"c": "Iran", "h": 4.689, "p": 2.435}, {"c": "Iraq", "h": 4.528, "p": 3.249}, {"c": "Ireland", "h": 6.964, "p": 1.384}, {"c": "Israel", "h": 7.142, "p": 2.636}, {"c": "Italy", "h": 6.022, "p": 1.671}, {"c": "Jamaica", "h": 5.662, "p": 1.957}, {"c": "Japan", "h": 5.926, "p": 1.345}, {"c": "Jordan", "h": 5.18, "p": 1.959}, {"c": "Kenya", "h": 4.449, "p": 2.327}, {"c": "Lebanon", "h": 5.15, "p": 2.589}, {"c": "Libya", "h": 5.597, "p": 2.913}, {"c": "Mexico", "h": 6.725, "p": 2.355}, {"c": "Netherlands", "h": 7.405, "p": 1.476}, {"c": "New Zealand", "h": 7.313, "p": 1.279}, {"c": "Nigeria", "h": 5.127, "p": 2.741}, {"c": "Norway", "h": 7.541, "p": 1.482}, {"c": "Oman", "h": 6.853, "p": 1.959}, {"c": "Pakistan", "h": 5.344, "p": 2.894}, {"c": "Philippines", "h": 5.387, "p": 2.363}, {"c": "Poland", "h": 5.981, "p": 1.548}, {"c": "Russia", "h": 5.799, "p": 3.011}, {"c": "Rwanda", "h": 3.439, "p": 2.119}, {"c": "Saudi Arabia", "h": 6.376, "p": 2.306}, {"c": "Singapore", "h": 6.543, "p": 1.377}, {"c": "Somalia", "h": 5.06, "p": 3.066}, {"c": "South Africa", "h": 4.675, "p": 2.365}, {"c": "South Korea", "h": 5.885, "p": 1.78}, {"c": "South Sudan", "h": 3.383, "p": 3.266}, {"c": "Spain", "h": 6.351, "p": 1.548}, {"c": "Sudan", "h": 4.242, "p": 2.952}, {"c": "Sweden", "h": 7.319, "p": 1.469}, {"c": "Switzerland", "h": 7.511, "p": 1.366}, {"c": "Syria", "h": 3.292, "p": 3.33}, {"c": "Thailand", "h": 6.287, "p": 2.189}, {"c": "Turkey", "h": 5.415, "p": 2.546}, {"c": "Ukraine", "h": 4.307, "p": 2.831}, {"c": "United Arab Emirates", "h": 6.744, "p": 1.865}, {"c": "United Kingdom", "h": 6.91, "p": 1.728}, {"c": "United States", "h": 6.999, "p": 2.29}, {"c": "Uruguay", "h": 6.431, "p": 1.671}, {"c": "Venezuela", "h": 5.531, "p": 2.642}, {"c": "Yemen", "h": 3.626, "p": 3.107}];
+const T5_DATA = [{"country": "United States", "medals": 144, "happiness": 6.999, "gdp": 1.456, "freedom": 0.482, "peace": 2.0}, {"country": "China", "medals": 79, "happiness": 5.219, "gdp": 1.003, "freedom": 0.44, "peace": 2.077}, {"country": "Germany", "medals": 73, "happiness": 6.929, "gdp": 1.395, "freedom": 0.535, "peace": 1.472}, {"country": "United Kingdom", "medals": 72, "happiness": 6.91, "gdp": 1.338, "freedom": 0.5, "peace": 1.728}, {"country": "France", "medals": 57, "happiness": 6.515, "gdp": 1.344, "freedom": 0.466, "peace": 1.838}, {"country": "Russia", "medals": 56, "happiness": 5.799, "gdp": 1.197, "freedom": 0.327, "peace": 3.011}, {"country": "Japan", "medals": 54, "happiness": 5.926, "gdp": 1.338, "freedom": 0.468, "peace": 1.345}, {"country": "Canada", "medals": 51, "happiness": 7.351, "gdp": 1.388, "freedom": 0.574, "peace": 1.324}, {"country": "Norway", "medals": 43, "happiness": 7.541, "gdp": 1.519, "freedom": 0.596, "peace": 1.482}, {"country": "Netherlands", "medals": 39, "happiness": 7.405, "gdp": 1.411, "freedom": 0.552, "peace": 1.476}];
+const OBJ_DATA = [{"country": "Argentina", "medals": 4, "happiness": 6.459, "gdp": 1.111, "peace": 1.942, "region": "Latin America"}, {"country": "Australia", "medals": 32, "happiness": 7.276, "gdp": 1.395, "peace": 1.412, "region": "Oceania"}, {"country": "Austria", "medals": 15, "happiness": 7.142, "gdp": 1.398, "peace": 1.266, "region": "Western Europe"}, {"country": "Belgium", "medals": 7, "happiness": 6.921, "gdp": 1.375, "peace": 1.481, "region": "Western Europe"}, {"country": "Brazil", "medals": 19, "happiness": 6.658, "gdp": 1.033, "peace": 2.208, "region": "Latin America"}, {"country": "Canada", "medals": 51, "happiness": 7.351, "gdp": 1.388, "peace": 1.324, "region": "North America"}, {"country": "Colombia", "medals": 8, "happiness": 6.34, "gdp": 0.993, "peace": 2.636, "region": "Latin America"}, {"country": "Czech Republic", "medals": 17, "happiness": 6.655, "gdp": 1.269, "peace": 1.346, "region": "Central/Eastern Europe"}, {"country": "Denmark", "medals": 15, "happiness": 7.546, "gdp": 1.397, "peace": 1.276, "region": "Western Europe"}, {"country": "Egypt", "medals": 3, "happiness": 4.375, "gdp": 0.925, "peace": 2.383, "region": "Middle East"}, {"country": "Finland", "medals": 7, "happiness": 7.538, "gdp": 1.357, "peace": 1.397, "region": "Western Europe"}, {"country": "France", "medals": 57, "happiness": 6.515, "gdp": 1.344, "peace": 1.838, "region": "Western Europe"}, {"country": "Germany", "medals": 73, "happiness": 6.929, "gdp": 1.395, "peace": 1.472, "region": "Western Europe"}, {"country": "United Kingdom", "medals": 72, "happiness": 6.91, "gdp": 1.338, "peace": 1.728, "region": "Western Europe"}, {"country": "Hungary", "medals": 16, "happiness": 5.329, "gdp": 1.204, "peace": 1.533, "region": "Central/Eastern Europe"}, {"country": "India", "medals": 2, "happiness": 4.298, "gdp": 0.731, "peace": 2.356, "region": "Southern Asia"}, {"country": "Indonesia", "medals": 3, "happiness": 5.252, "gdp": 0.921, "peace": 1.706, "region": "Southeast Asia"}, {"country": "Ireland", "medals": 2, "happiness": 6.964, "gdp": 1.46, "peace": 1.384, "region": "Western Europe"}, {"country": "Israel", "medals": 2, "happiness": 7.142, "gdp": 1.304, "peace": 2.636, "region": "Western Europe"}, {"country": "Italy", "medals": 38, "happiness": 6.022, "gdp": 1.312, "peace": 1.671, "region": "Western Europe"}, {"country": "Jamaica", "medals": 11, "happiness": 5.662, "gdp": 0.856, "peace": 1.957, "region": "Latin America"}, {"country": "Japan", "medals": 54, "happiness": 5.926, "gdp": 1.338, "peace": 1.345, "region": "Eastern Asia"}, {"country": "Jordan", "medals": 1, "happiness": 5.18, "gdp": 0.91, "peace": 1.959, "region": "Middle East"}, {"country": "Kenya", "medals": 13, "happiness": 4.449, "gdp": 0.491, "peace": 2.327, "region": "Sub-Saharan Africa"}, {"country": "Mexico", "medals": 5, "happiness": 6.725, "gdp": 1.079, "peace": 2.355, "region": "Latin America"}, {"country": "Netherlands", "medals": 39, "happiness": 7.405, "gdp": 1.411, "peace": 1.476, "region": "Western Europe"}, {"country": "New Zealand", "medals": 20, "happiness": 7.313, "gdp": 1.318, "peace": 1.279, "region": "Oceania"}, {"country": "Nigeria", "medals": 1, "happiness": 5.127, "gdp": 0.715, "peace": 2.741, "region": "Sub-Saharan Africa"}, {"country": "Norway", "medals": 43, "happiness": 7.541, "gdp": 1.519, "peace": 1.482, "region": "Western Europe"}, {"country": "China", "medals": 79, "happiness": 5.219, "gdp": 1.003, "peace": 2.077, "region": "Eastern Asia"}, {"country": "Philippines", "medals": 1, "happiness": 5.387, "gdp": 0.791, "peace": 2.363, "region": "Southeast Asia"}, {"country": "Poland", "medals": 13, "happiness": 5.981, "gdp": 1.209, "peace": 1.548, "region": "Central/Eastern Europe"}, {"country": "South Korea", "medals": 38, "happiness": 5.885, "gdp": 1.315, "peace": 1.78, "region": "Eastern Asia"}, {"country": "Russia", "medals": 56, "happiness": 5.799, "gdp": 1.197, "peace": 3.011, "region": "CIS"}, {"country": "Singapore", "medals": 1, "happiness": 6.543, "gdp": 1.592, "peace": 1.377, "region": "Southeast Asia"}, {"country": "South Africa", "medals": 10, "happiness": 4.675, "gdp": 0.98, "peace": 2.365, "region": "Sub-Saharan Africa"}, {"country": "Spain", "medals": 19, "happiness": 6.351, "gdp": 1.299, "peace": 1.548, "region": "Western Europe"}, {"country": "Sweden", "medals": 25, "happiness": 7.319, "gdp": 1.404, "peace": 1.469, "region": "Western Europe"}, {"country": "Switzerland", "medals": 22, "happiness": 7.511, "gdp": 1.472, "peace": 1.366, "region": "Western Europe"}, {"country": "Thailand", "medals": 6, "happiness": 6.287, "gdp": 1.05, "peace": 2.189, "region": "Southeast Asia"}, {"country": "Turkey", "medals": 8, "happiness": 5.415, "gdp": 1.151, "peace": 2.546, "region": "Middle East"}, {"country": "Ukraine", "medals": 12, "happiness": 4.307, "gdp": 0.836, "peace": 2.831, "region": "CIS"}, {"country": "United Arab Emirates", "medals": 1, "happiness": 6.744, "gdp": 1.645, "peace": 1.865, "region": "Middle East"}, {"country": "United States", "medals": 144, "happiness": 6.999, "gdp": 1.456, "peace": 2.29, "region": "North America"}, {"country": "Venezuela", "medals": 3, "happiness": 5.531, "gdp": 1.052, "peace": 2.642, "region": "Latin America"}];
+const REG_DATA = [{"region": "CIS", "happiness": 5.053, "peace": 2.921, "medals": 68, "countries": 2}, {"region": "Central/Eastern Europe", "happiness": 5.988, "peace": 1.476, "medals": 46, "countries": 3}, {"region": "Eastern Asia", "happiness": 5.677, "peace": 1.734, "medals": 171, "countries": 3}, {"region": "Latin America", "happiness": 6.229, "peace": 2.29, "medals": 50, "countries": 6}, {"region": "Middle East", "happiness": 5.428, "peace": 2.188, "medals": 13, "countries": 4}, {"region": "North America", "happiness": 7.175, "peace": 1.807, "medals": 195, "countries": 2}, {"region": "Oceania", "happiness": 7.294, "peace": 1.346, "medals": 52, "countries": 2}, {"region": "Southeast Asia", "happiness": 5.867, "peace": 1.909, "medals": 11, "countries": 4}, {"region": "Southern Asia", "happiness": 4.298, "peace": 2.356, "medals": 2, "countries": 1}, {"region": "Sub-Saharan Africa", "happiness": 4.75, "peace": 2.478, "medals": 24, "countries": 3}, {"region": "Western Europe", "happiness": 7.05, "peace": 1.566, "medals": 436, "countries": 15}];
+
+const COLORS = ['#38bdf8','#818cf8','#f472b6','#34d399','#fb923c','#fbbf24','#a78bfa','#f87171','#2dd4bf','#e879f9','#60a5fa'];
+
+
+// ===== FILTER STATE =====
+const _state = {
+  objSort: 'composite',
+  objHL:   'all',
+  p2Year:  'all',
+  p2Group: 'both',
+  p3MinMed: 0
+};
+
+function _setActive(group, el) {
+  document.querySelectorAll(`[onclick*="${group}"]`).forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function objSort(key, el)       { _state.objSort = key;    _setActive('objSort', el);    drawObj(); }
+function objHighlight(key, el)  { _state.objHL   = key;    _setActive('objHighlight', el); drawObj(); }
+function p2Year(yr, el)         { _state.p2Year  = yr;     _setActive('p2Year', el);     drawPanel2(); }
+function p2Group(g, el)         { _state.p2Group = g;      _setActive('p2Group', el);    drawT2(); }
+function p3MinMed(n, el)        { _state.p3MinMed = n;     _setActive('p3MinMed', el);   drawPanel3(); }
+
+// ===== TAB NAVIGATION =====
+const _drawFns = [drawDesc, drawObj, drawPanel2, drawPanel3, drawPanel3];
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    requestAnimationFrame(() => _drawFns[+tab.dataset.tab]());
+  });
+});
+
+function getW(svgId) {
+  const el = document.getElementById(svgId);
+  let w = el.getBoundingClientRect().width;
+  if (w > 0) return w;
+  const ref = document.querySelector('.tabs') || document.body;
+  w = ref.getBoundingClientRect().width;
+  return (w > 0 ? w : 960) - 96;
+}
+
+function drawDesc() {}
+
+// ===== T1: LINE CHART =====
+function drawT1() {
+  const svg = d3.select('#chart-t1');
+  svg.selectAll('*').remove();
+  const W = getW('chart-t1'), H = 420;
+  const m = {t:30,r:140,b:40,l:50};
+  const w = W-m.l-m.r, h = H-m.t-m.b;
+  svg.attr('viewBox',`0 0 ${W} ${H}`);
+
+  const regions = [...new Set(T1_DATA.map(d=>d.Region))];
+  const g = svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+
+  const x = d3.scaleLinear().domain([2015,2019]).range([0,w]);
+  const y = d3.scaleLinear().domain([3.8,7.6]).range([h,0]);
+
+  // Grid
+  g.selectAll('.grid').data(y.ticks(6)).join('line')
+    .attr('x1',0).attr('x2',w).attr('y1',d=>y(d)).attr('y2',d=>y(d))
+    .attr('stroke','#1e293b').attr('stroke-dasharray','3,3');
+
+  // Axes
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('d')))
+    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
+  g.append('g').call(d3.axisLeft(y).ticks(6))
+    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
+  g.selectAll('.domain').attr('stroke','#2a3548');
+  g.selectAll('.tick line').attr('stroke','#2a3548');
+
+  // Lines
+  const line = d3.line().x(d=>x(d.Year)).y(d=>y(d.s)).curve(d3.curveMonotoneX);
+  regions.forEach((r,i) => {
+    const rd = T1_DATA.filter(d=>d.Region===r);
+    g.append('path').datum(rd).attr('d',line)
+      .attr('fill','none').attr('stroke',COLORS[i]).attr('stroke-width',2.5)
+      .attr('opacity',0.85);
+    // Dots
+    g.selectAll('.dot-'+i).data(rd).join('circle')
+      .attr('cx',d=>x(d.Year)).attr('cy',d=>y(d.s)).attr('r',4)
+      .attr('fill',COLORS[i]).attr('stroke',COLORS[i]).attr('stroke-width',1)
+      .attr('opacity',0.9).attr('cursor','pointer')
+      .on('mouseover', function(ev,d) {
+        d3.select(this).attr('r',7);
+        const tip = document.getElementById('tip-t1');
+        tip.style.display='block';
+        tip.innerHTML=`<div class="tt-title">${d.Region}</div><div class="tt-row">Año: <span class="tt-val">${d.Year}</span></div><div class="tt-row">Score: <span class="tt-val">${d.s.toFixed(3)}</span></div>`;
+        tip.style.left=(ev.offsetX+15)+'px'; tip.style.top=(ev.offsetY-40)+'px';
+      })
+      .on('mouseout', function() {
+        d3.select(this).attr('r',4);
+        document.getElementById('tip-t1').style.display='none';
+      });
+    // Label at end
+    const last = rd[rd.length-1];
+    g.append('text').attr('x',x(last.Year)+8).attr('y',y(last.s)+4)
+      .text(r).attr('fill',COLORS[i]).attr('font-size','10px').attr('font-weight',500);
+  });
+
+  g.append('text').attr('x',w/2).attr('y',-10).attr('text-anchor','middle')
+    .attr('fill','#94a3b8').attr('font-size','12px').text('Happiness Score promedio por región (2015–2019)');
+}
+
+
+// ===== T2: BOX PLOT =====
+function drawT2() {
+  const svg = d3.select('#chart-t2');
+  svg.selectAll('*').remove();
+  const W = getW('chart-t2'), H = 400;
+  const m = {t:30,r:40,b:60,l:60};
+  const w = W-m.l-m.r, h = H-m.t-m.b;
+  svg.attr('viewBox',`0 0 ${W} ${H}`);
+  const g = svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+
+  const grpFilter = _state.p2Group;
+  const groups = ['Con medallas','Sin medallas'].filter(k =>
+    grpFilter === 'both'     ? true :
+    grpFilter === 'medals'   ? k === 'Con medallas' :
+                               k === 'Sin medallas'
+  );
+  const colors = ['#38bdf8','#f472b6'];
+
+  const x = d3.scaleBand().domain(groups).range([0,w]).padding(0.4);
+  const y = d3.scaleLinear().domain([0.8,3.8]).range([h,0]);
+
+  // Grid
+  g.selectAll('.grid').data(y.ticks(6)).join('line')
+    .attr('x1',0).attr('x2',w).attr('y1',d=>y(d)).attr('y2',d=>y(d))
+    .attr('stroke','#1e293b').attr('stroke-dasharray','3,3');
+
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x))
+    .selectAll('text').attr('fill','#94a3b8').attr('font-size','12px').attr('font-weight',600);
+  g.append('g').call(d3.axisLeft(y).ticks(6))
+    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
+  g.selectAll('.domain').attr('stroke','#2a3548');
+  g.selectAll('.tick line').attr('stroke','#2a3548');
+
+  groups.forEach((grp,i) => {
+    const s = T2_SUMMARY[grp];
+    const cx = x(grp) + x.bandwidth()/2;
+    const bw = x.bandwidth() * 0.6;
+
+    // Whiskers
+    g.append('line').attr('x1',cx).attr('x2',cx).attr('y1',y(s.min)).attr('y2',y(s.q1))
+      .attr('stroke',colors[i]).attr('stroke-width',2);
+    g.append('line').attr('x1',cx).attr('x2',cx).attr('y1',y(s.q3)).attr('y2',y(s.max))
+      .attr('stroke',colors[i]).attr('stroke-width',2);
+    // Caps
+    g.append('line').attr('x1',cx-bw/3).attr('x2',cx+bw/3).attr('y1',y(s.min)).attr('y2',y(s.min))
+      .attr('stroke',colors[i]).attr('stroke-width',2);
+    g.append('line').attr('x1',cx-bw/3).attr('x2',cx+bw/3).attr('y1',y(s.max)).attr('y2',y(s.max))
+      .attr('stroke',colors[i]).attr('stroke-width',2);
+    // Box
+    g.append('rect').attr('x',cx-bw/2).attr('y',y(s.q3)).attr('width',bw).attr('height',y(s.q1)-y(s.q3))
+      .attr('fill',colors[i]).attr('fill-opacity',0.2).attr('stroke',colors[i]).attr('stroke-width',2).attr('rx',4);
+    // Median
+    g.append('line').attr('x1',cx-bw/2).attr('x2',cx+bw/2).attr('y1',y(s.median)).attr('y2',y(s.median))
+      .attr('stroke','#fff').attr('stroke-width',2.5);
+    // Mean dot
+    g.append('circle').attr('cx',cx).attr('cy',y(s.mean)).attr('r',5)
+      .attr('fill',colors[i]).attr('stroke','#fff').attr('stroke-width',1.5);
+
+    // Labels
+    const labels = [
+      {v:s.max,l:'Máx: '+s.max.toFixed(2)},
+      {v:s.q3,l:'Q3: '+s.q3.toFixed(2)},
+      {v:s.median,l:'Med: '+s.median.toFixed(2)},
+      {v:s.q1,l:'Q1: '+s.q1.toFixed(2)},
+      {v:s.min,l:'Mín: '+s.min.toFixed(2)}
+    ];
+    labels.forEach(lb => {
+      g.append('text').attr('x',cx+bw/2+8).attr('y',y(lb.v)+4)
+        .text(lb.l).attr('fill','#94a3b8').attr('font-size','9px');
+    });
+  });
+
+  g.append('text').attr('x',w/2).attr('y',h+45).attr('text-anchor','middle')
+    .attr('fill','#94a3b8').attr('font-size','11px').text('Overall Peace Score (menor = más pacífico)');
+
+  // Stats cards
+  const statsDiv = document.getElementById('t2-stats');
+  statsDiv.innerHTML = groups.map((grp,i) => {
+    const s = T2_SUMMARY[grp];
+    return `<div class="stat-card"><div class="stat-label" style="color:${colors[i]}">${grp}</div><div class="stat-value" style="color:${colors[i]}">${s.median.toFixed(3)}</div><div class="stat-sub">Mediana · n=${s.count} · μ=${s.mean.toFixed(3)}</div></div>`;
+  }).join('') + `<div class="stat-card"><div class="stat-label">Diferencia</div><div class="stat-value" style="color:#34d399">-0.128</div><div class="stat-sub">Los medallistas son más pacíficos</div></div>`;
+}
+
+
+// ===== T3: LOLLIPOP RANK CHART (GDP vs Medals) =====
+function drawT3() {
+  const svg = d3.select('#chart-t3');
+  svg.selectAll('*').remove();
+  const W = getW('chart-t3'), H = 480;
+  const m = {t:40,r:30,b:100,l:65};
+  const w = W-m.l-m.r, h = H-m.t-m.b;
+  svg.attr('viewBox',`0 0 ${W} ${H}`);
+  const g = svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+
+  // Sort countries by GDP ascending, apply filters
+  const gdpQSel  = document.getElementById('p3-gdp')?.value || 'all';
+  const minMed   = _state.p3MinMed;
+  let allSorted  = [...T3_DATA].sort((a,b)=>a.g-b.g);
+  const gdpValsF = allSorted.map(d=>d.g).sort(d3.ascending);
+  const qBounds  = [0,1,2,3].map(qi => d3.quantile(gdpValsF, qi*0.25));
+  qBounds.push(Infinity);
+  const data = allSorted.filter((d,i) => {
+    const qi = allSorted.indexOf(d);
+    const n  = allSorted.length;
+    const bucket = qi < n*0.25 ? 0 : qi < n*0.5 ? 1 : qi < n*0.75 ? 2 : 3;
+    const gdpOk  = gdpQSel === 'all' || bucket === +gdpQSel;
+    return gdpOk && d.m >= minMed;
+  });
+  const N = data.length;
+
+  const x = d3.scaleBand().domain(data.map(d=>d.c)).range([0,w]).padding(0.3);
+  const y = d3.scaleLog().domain([0.8, d3.max(data,d=>d.m)*1.2]).range([h,0]).clamp(true);
+
+  // Happiness color scale (low=red, high=green)
+  const happyExtent = d3.extent(data, d=>d.h);
+  const colorScale = d3.scaleSequential()
+    .domain(happyExtent)
+    .interpolator(d3.interpolateRdYlGn);
+
+  // GDP quartile bands background
+  const gdpVals = data.map(d=>d.g);
+  const q1g = d3.quantile([...gdpVals].sort(d3.ascending), 0.25);
+  const q2g = d3.quantile([...gdpVals].sort(d3.ascending), 0.5);
+  const q3g = d3.quantile([...gdpVals].sort(d3.ascending), 0.75);
+
+  const quartiles = [
+    {label:'GDP Bajo', color:'rgba(239,68,68,0.05)', from:0},
+    {label:'GDP Medio-Bajo', color:'rgba(251,191,36,0.05)', from: Math.floor(N*0.25)},
+    {label:'GDP Medio-Alto', color:'rgba(56,189,248,0.05)', from: Math.floor(N*0.5)},
+    {label:'GDP Alto', color:'rgba(52,211,153,0.05)', from: Math.floor(N*0.75)}
+  ];
+  const bandColors = ['rgba(239,68,68,0.06)','rgba(251,191,36,0.06)','rgba(56,189,248,0.06)','rgba(52,211,153,0.06)'];
+  const bandLabels = ['GDP Bajo','GDP Medio-Bajo','GDP Medio-Alto','GDP Alto'];
+  [0,1,2,3].forEach(qi => {
+    const fromIdx = Math.floor(N*qi*0.25);
+    const toIdx = qi===3 ? N : Math.floor(N*(qi+1)*0.25);
+    const fromCountry = data[fromIdx].c;
+    const toCountry = data[toIdx-1].c;
+    const bx1 = x(fromCountry);
+    const bx2 = x(toCountry) + x.bandwidth();
+    g.append('rect').attr('x',bx1).attr('y',0).attr('width',bx2-bx1).attr('height',h)
+      .attr('fill',bandColors[qi]);
+    g.append('text').attr('x',(bx1+bx2)/2).attr('y',-20)
+      .text(bandLabels[qi]).attr('text-anchor','middle')
+      .attr('fill',['#ef4444','#fbbf24','#38bdf8','#34d399'][qi])
+      .attr('font-size','10px').attr('font-weight',600);
+    // vertical divider
+    if(qi>0) g.append('line').attr('x1',bx1).attr('x2',bx1).attr('y1',-28).attr('y2',h)
+      .attr('stroke','#2a3548').attr('stroke-width',1).attr('stroke-dasharray','4,3');
+  });
+
+  // Grid lines
+  g.selectAll('.grid').data(y.ticks(5)).join('line')
+    .attr('x1',0).attr('x2',w).attr('y1',d=>y(d)).attr('y2',d=>y(d))
+    .attr('stroke','#1e293b').attr('stroke-dasharray','3,3');
+
+  // Lollipop stems
+  g.selectAll('.stem').data(data).join('line')
+    .attr('x1',d=>x(d.c)+x.bandwidth()/2).attr('x2',d=>x(d.c)+x.bandwidth()/2)
+    .attr('y1',h).attr('y2',d=>y(d.m))
+    .attr('stroke',d=>colorScale(d.h)).attr('stroke-width',1.5).attr('opacity',0.7);
+
+  // Lollipop heads
+  g.selectAll('.head').data(data).join('circle')
+    .attr('cx',d=>x(d.c)+x.bandwidth()/2).attr('cy',d=>y(d.m))
+    .attr('r', d => d.m > 30 ? 7 : d.m > 10 ? 5 : 4)
+    .attr('fill',d=>colorScale(d.h))
+    .attr('stroke',d=>colorScale(d.h)).attr('stroke-width',1.5)
+    .attr('opacity',0.85).attr('cursor','pointer')
+    .on('mouseover', function(ev,d) {
+      d3.select(this).attr('r',10).attr('opacity',1);
+      const tip = document.getElementById('tip-t3');
+      tip.style.display='block';
+      tip.innerHTML=`<div class="tt-title">${d.c}</div>
+        <div class="tt-row">Medallas: <span class="tt-val">${d.m}</span></div>
+        <div class="tt-row">GDP per Cápita: <span class="tt-val">${d.g.toFixed(3)}</span></div>
+        <div class="tt-row">Happiness: <span class="tt-val">${d.h.toFixed(3)}</span></div>`;
+      tip.style.left=(ev.offsetX+15)+'px'; tip.style.top=(ev.offsetY-60)+'px';
+    })
+    .on('mouseout', function(ev,d) {
+      d3.select(this).attr('r', d.m>30?7:d.m>10?5:4).attr('opacity',0.85);
+      document.getElementById('tip-t3').style.display='none';
+    });
+
+  // 2-3 labels per GDP quartile — pick top medal-getters per quartile
+  const getQuartile = (d) => {
+    if(d.g <= d3.quantile([...data].map(x=>x.g).sort(d3.ascending), 0.25)) return 0;
+    if(d.g <= d3.quantile([...data].map(x=>x.g).sort(d3.ascending), 0.50)) return 1;
+    if(d.g <= d3.quantile([...data].map(x=>x.g).sort(d3.ascending), 0.75)) return 2;
+    return 3;
+  };
+  const notable = [0,1,2,3].flatMap(qi =>
+    [...data].filter(d=>getQuartile(d)===qi)
+             .sort((a,b)=>b.m-a.m)
+             .slice(0,2)
+  );
+  g.selectAll('.lbl').data(notable).join('text')
+    .attr('x',d=>x(d.c)+x.bandwidth()/2).attr('y',d=>y(d.m)-12)
+    .text(d=>d.c).attr('text-anchor','middle').attr('fill','#cbd5e1')
+    .attr('font-size','9px').attr('font-weight',600);
+
+  // Axes
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).tickValues([]))
+    .selectAll('.domain').attr('stroke','#2a3548');
+  g.append('g').call(d3.axisLeft(y).tickValues([1,2,5,10,20,50,100,150]).tickFormat(d3.format('d')))
+    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
+  g.selectAll('.domain').attr('stroke','#2a3548');
+  g.selectAll('.tick line').attr('stroke','#2a3548');
+
+  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-50)
+    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px')
+    .text('Total de medallas olímpicas');
+  g.append('text').attr('x',w/2).attr('y',h+30).attr('text-anchor','middle')
+    .attr('fill','#94a3b8').attr('font-size','11px')
+    .text('Países ordenados por GDP per Cápita (menor → mayor) →');
+
+  // Color legend
+  const defs = svg.append('defs');
+  const grad = defs.append('linearGradient').attr('id','happyGrad');
+  grad.append('stop').attr('offset','0%').attr('stop-color','#ef4444');
+  grad.append('stop').attr('offset','50%').attr('stop-color','#fbbf24');
+  grad.append('stop').attr('offset','100%').attr('stop-color','#34d399');
+  svg.append('rect').attr('x',m.l).attr('y',H-28).attr('width',120).attr('height',8)
+    .attr('fill','url(#happyGrad)').attr('rx',3);
+  svg.append('text').attr('x',m.l).attr('y',H-32).attr('fill','#94a3b8').attr('font-size','9px').text('Happiness Score:');
+  svg.append('text').attr('x',m.l).attr('y',H-14).attr('fill','#94a3b8').attr('font-size','8.5px').text('Bajo');
+  svg.append('text').attr('x',m.l+120).attr('y',H-14).attr('fill','#94a3b8').attr('font-size','8.5px').attr('text-anchor','end').text('Alto');
+}
+
+
+// ===== T4: SCATTER QUADRANT =====
+function drawT4() {
+  const svg = d3.select('#chart-t4');
+  svg.selectAll('*').remove();
+  const W = getW('chart-t4'), H = 500;
+  const m = {t:30,r:30,b:50,l:60};
+  const w = W-m.l-m.r, h = H-m.t-m.b;
+  svg.attr('viewBox',`0 0 ${W} ${H}`);
+  const g = svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+
+  const x = d3.scaleLinear().domain([0.8,3.6]).range([0,w]);
+  const y = d3.scaleLinear().domain([2.5,8]).range([h,0]);
+
+  const medH = d3.median(T4_DATA, d=>d.h);
+  const medP = d3.median(T4_DATA, d=>d.p);
+
+  // Grid
+  g.selectAll('.gridy').data(y.ticks(6)).join('line')
+    .attr('x1',0).attr('x2',w).attr('y1',d=>y(d)).attr('y2',d=>y(d))
+    .attr('stroke','#1e293b').attr('stroke-dasharray','3,3');
+
+  // Quadrant lines
+  g.append('line').attr('x1',x(medP)).attr('x2',x(medP)).attr('y1',0).attr('y2',h)
+    .attr('stroke','#475569').attr('stroke-width',1.5).attr('stroke-dasharray','6,4');
+  g.append('line').attr('x1',0).attr('x2',w).attr('y1',y(medH)).attr('y2',y(medH))
+    .attr('stroke','#475569').attr('stroke-width',1.5).attr('stroke-dasharray','6,4');
+
+  // Quadrant labels
+  const qlabels = [
+    {x:x(medP)/2, y:20, t:'Feliz & Pacífico ✓', c:'#34d399'},
+    {x:x(medP)+(w-x(medP))/2, y:20, t:'Feliz & Conflictivo ⚠', c:'#fbbf24'},
+    {x:x(medP)/2, y:h-10, t:'Infeliz & Pacífico', c:'#94a3b8'},
+    {x:x(medP)+(w-x(medP))/2, y:h-10, t:'Infeliz & Conflictivo ✗', c:'#ef4444'}
+  ];
+  qlabels.forEach(ql => {
+    g.append('text').attr('x',ql.x).attr('y',ql.y).text(ql.t)
+      .attr('fill',ql.c).attr('font-size','10px').attr('text-anchor','middle').attr('opacity',0.7);
+  });
+
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(6))
+    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
+  g.append('g').call(d3.axisLeft(y).ticks(6))
+    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
+  g.selectAll('.domain').attr('stroke','#2a3548');
+  g.selectAll('.tick line').attr('stroke','#2a3548');
+
+  const getQuadColor = d => {
+    if(d.h>=medH && d.p<=medP) return '#34d399';
+    if(d.h>=medH && d.p>medP) return '#fbbf24';
+    if(d.h<medH && d.p<=medP) return '#60a5fa';
+    return '#ef4444';
+  };
+
+  const rgT4 = document.getElementById('p3-region')?.value || 'all';
+  const t4country2region = {};
+  OBJ_DATA.forEach(d => { t4country2region[d.country] = d.region; });
+
+  g.selectAll('.dot').data(T4_DATA).join('circle')
+    .attr('cx',d=>x(d.p)).attr('cy',d=>y(d.h)).attr('r',5.5)
+    .attr('fill',d=>getQuadColor(d))
+    .attr('fill-opacity', d => rgT4==='all' ? 0.7 : (t4country2region[d.c]===rgT4 ? 0.95 : 0.1))
+    .attr('stroke',d=>getQuadColor(d)).attr('stroke-width',1).attr('cursor','pointer')
+    .on('mouseover', function(ev,d) {
+      d3.select(this).attr('r',9).attr('fill-opacity',1);
+      const tip = document.getElementById('tip-t4');
+      tip.style.display='block';
+      tip.innerHTML=`<div class="tt-title">${d.c}</div><div class="tt-row">Felicidad: <span class="tt-val">${d.h.toFixed(3)}</span></div><div class="tt-row">Paz (Overall): <span class="tt-val">${d.p.toFixed(3)}</span></div>`;
+      tip.style.left=(ev.offsetX+15)+'px'; tip.style.top=(ev.offsetY-50)+'px';
+    })
+    .on('mouseout', function() {
+      d3.select(this).attr('r',5.5).attr('fill-opacity',0.7);
+      document.getElementById('tip-t4').style.display='none';
+    });
+
+  // Label outliers
+  const outliers = T4_DATA.filter(d=>(d.h>6.5&&d.p>2.3)||(d.h>7.3)||(d.p>3)||(d.h<3.5)||(d.c==='Israel')||(d.c==='Colombia')||(d.c==='Somalia'));
+  g.selectAll('.olbl').data(outliers).join('text')
+    .attr('x',d=>x(d.p)+7).attr('y',d=>y(d.h)+3)
+    .text(d=>d.c).attr('fill','#cbd5e1').attr('font-size','8.5px');
+
+  g.append('text').attr('x',w/2).attr('y',h+40).attr('text-anchor','middle')
+    .attr('fill','#94a3b8').attr('font-size','11px').text('Overall Peace Score (menor = más pacífico) →');
+  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-45)
+    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px').text('← Happiness Score');
+}
+
+
+// ===== T5: RADAR CHART =====
+function drawT5() {
+  const svg = d3.select('#chart-t5');
+  svg.selectAll('*').remove();
+  const W = getW('chart-t5'), H = 480;
+  svg.attr('viewBox',`0 0 ${W} ${H}`);
+  const cx = W/2, cy = H/2 - 10, R = Math.min(W,H)/2 - 60;
+
+  const dims = [
+    {key:'medals',label:'Medallas',max:144},
+    {key:'happiness',label:'Felicidad',max:8},
+    {key:'gdp',label:'GDP',max:1.6},
+    {key:'freedom',label:'Libertad',max:0.7},
+    {key:'peace',label:'Paz (inv)',max:3.5,invert:true}
+  ];
+  const n = dims.length;
+  const angleSlice = (2*Math.PI)/n;
+
+  const g = svg.append('g').attr('transform',`translate(${cx},${cy})`);
+
+  // Grid circles
+  [0.2,0.4,0.6,0.8,1].forEach(lvl => {
+    const pts = [];
+    for(let i=0;i<n;i++){
+      const a = angleSlice*i - Math.PI/2;
+      pts.push([R*lvl*Math.cos(a), R*lvl*Math.sin(a)]);
+    }
+    g.append('polygon').attr('points',pts.map(p=>p.join(',')).join(' '))
+      .attr('fill','none').attr('stroke','#1e293b').attr('stroke-width',1);
+    if(lvl===1) {
+      g.append('polygon').attr('points',pts.map(p=>p.join(',')).join(' '))
+        .attr('fill','none').attr('stroke','#2a3548').attr('stroke-width',1.5);
+    }
+  });
+
+  // Axis lines + labels
+  dims.forEach((dim,i) => {
+    const a = angleSlice*i - Math.PI/2;
+    const lx = (R+25)*Math.cos(a), ly = (R+25)*Math.sin(a);
+    g.append('line').attr('x1',0).attr('y1',0).attr('x2',R*Math.cos(a)).attr('y2',R*Math.sin(a))
+      .attr('stroke','#2a3548').attr('stroke-width',1);
+    g.append('text').attr('x',lx).attr('y',ly+4).attr('text-anchor','middle')
+      .attr('fill','#94a3b8').attr('font-size','11px').attr('font-weight',600).text(dim.label);
+  });
+
+  // Default: show Canada, Norway, Russia, China
+  const defaultShow = ['Canada','Norway','Russia','China'];
+  const selected = new Set(defaultShow);
+
+  function drawRadars() {
+    g.selectAll('.radar-path,.radar-dot').remove();
+    const shown = T5_DATA.filter(d=>selected.has(d.country));
+    shown.forEach((country,ci) => {
+      const color = COLORS[T5_DATA.indexOf(country) % COLORS.length];
+      const pts = dims.map((dim,i) => {
+        let val = country[dim.key] || 0;
+        if(dim.invert) val = dim.max - val;
+        const norm = Math.max(0, Math.min(1, val / dim.max));
+        const a = angleSlice*i - Math.PI/2;
+        return [R*norm*Math.cos(a), R*norm*Math.sin(a)];
+      });
+      g.append('polygon').attr('class','radar-path').attr('points',pts.map(p=>p.join(',')).join(' '))
+        .attr('fill',color).attr('fill-opacity',0.1).attr('stroke',color).attr('stroke-width',2.5);
+      pts.forEach((p,i) => {
+        g.append('circle').attr('class','radar-dot').attr('cx',p[0]).attr('cy',p[1]).attr('r',4)
+          .attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
+      });
+    });
+  }
+
+  // Filters
+  const filtersDiv = document.getElementById('t5-filters');
+  filtersDiv.innerHTML = '<span class="filter-label">Países:</span>';
+  T5_DATA.forEach((d,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (selected.has(d.country) ? ' active' : '');
+    btn.textContent = d.country;
+    btn.style.borderColor = selected.has(d.country) ? COLORS[i] : '';
+    btn.style.background = selected.has(d.country) ? COLORS[i] : '';
+    btn.style.color = selected.has(d.country) ? '#0a0e17' : '';
+    btn.addEventListener('click', () => {
+      if(selected.has(d.country)) selected.delete(d.country); else selected.add(d.country);
+      btn.classList.toggle('active');
+      btn.style.borderColor = selected.has(d.country) ? COLORS[i] : '';
+      btn.style.background = selected.has(d.country) ? COLORS[i] : '';
+      btn.style.color = selected.has(d.country) ? '#0a0e17' : '';
+      drawRadars();
+    });
+    filtersDiv.appendChild(btn);
+  });
+
+  drawRadars();
+}
+
+
+
+// ===== OBJ GENERAL: CLEVELAND DOT PLOT =====
+function drawObj() {
+  const svg = d3.select('#chart-obj');
+  svg.selectAll('*').remove();
+  const W = getW('chart-obj'), H = 420;
+  const m = {t:50, r:40, b:40, l:170};
+  const w = W-m.l-m.r, h = H-m.t-m.b;
+  svg.attr('viewBox',`0 0 ${W} ${H}`);
+  const g = svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+
+  // Normalize 0–1
+  const norm = {
+    happiness: d => (d.happiness - 3.8) / (7.8 - 3.8),
+    peace:     d => 1 - (d.peace - 1.0) / (3.5 - 1.0),
+    medals:    d => d.medals / 436
+  };
+  const sortKey = _state.objSort;
+  const sortFn = sortKey === 'composite'
+    ? (a,b) => (norm.happiness(b)+norm.peace(b)+norm.medals(b)) - (norm.happiness(a)+norm.peace(a)+norm.medals(a))
+    : (a,b) => norm[sortKey](b) - norm[sortKey](a);
+  const topN   = parseInt(document.getElementById('obj-topn')?.value || 11);
+  const data   = [...REG_DATA].sort(sortFn).slice(0, topN);
+
+  const shortName = r => r
+    .replace('Central/Eastern Europe','C/E Europe')
+    .replace('Sub-Saharan Africa','Sub-Saharan Af.')
+    .replace('Southeast Asia','SE Asia')
+    .replace('Southern Asia','S. Asia')
+    .replace('North America','N. America')
+    .replace('Latin America','L. America')
+    .replace('Western Europe','W. Europe')
+    .replace('Middle East','Mid. East')
+    .replace('Eastern Asia','E. Asia');
+
+  const vars   = ['happiness','peace','medals'];
+  const labels = ['Felicidad','Paz','Medallas'];
+  const colors = ['#38bdf8','#34d399','#fb923c'];
+
+  const y = d3.scaleBand().domain(data.map(d=>d.region)).range([0,h]).padding(0.45);
+  const x = d3.scaleLinear().domain([0,1]).range([0,w]);
+
+  // Light grid lines
+  g.selectAll('.gx').data(x.ticks(4)).join('line')
+    .attr('x1',d=>x(d)).attr('x2',d=>x(d)).attr('y1',0).attr('y2',h)
+    .attr('stroke','#1e293b').attr('stroke-dasharray','3,4');
+
+  // Per-region: connecting line + 3 dots
+  data.forEach(d => {
+    const vals = vars.map(v => norm[v](d));
+    const cy   = y(d.region) + y.bandwidth()/2;
+    const minX = x(d3.min(vals));
+    const maxX = x(d3.max(vals));
+
+    // Connecting line between min and max dot
+    g.append('line')
+      .attr('x1', minX).attr('x2', maxX)
+      .attr('y1', cy).attr('y2', cy)
+      .attr('stroke','#334155').attr('stroke-width', 1.5);
+
+    // 3 dots
+    vars.forEach((v, i) => {
+      const vn = norm[v](d);
+      const hlKey = _state.objHL;
+      const isHL  = hlKey === 'all' || hlKey === v;
+      g.append('circle')
+        .attr('cx', x(vn)).attr('cy', cy).attr('r', isHL ? 7 : 4)
+        .attr('fill', colors[i])
+        .attr('opacity', isHL ? 1 : 0.25)
+        .attr('stroke', '#0a0e17').attr('stroke-width', 1.5)
+        .attr('cursor','pointer')
+        .on('mouseover', function(ev) {
+          d3.select(this).attr('r', 10);
+          const tip = document.getElementById('tip-obj');
+          tip.style.display = 'block';
+          const rawVal = v==='happiness' ? d.happiness
+                       : v==='peace'     ? d.peace+' (menor = más pacífico)'
+                       :                   d.medals+' medallas';
+          tip.innerHTML = `<div class="tt-title">${d.region}</div>
+            <div class="tt-row">${labels[i]}: <span class="tt-val">${rawVal}</span></div>
+            <div class="tt-row">Posición relativa: <span class="tt-val">${(vn*100).toFixed(0)}%</span></div>`;
+          tip.style.left=(ev.offsetX+14)+'px'; tip.style.top=(ev.offsetY-55)+'px';
+        })
+        .on('mouseout', function() {
+          d3.select(this).attr('r', 7);
+          document.getElementById('tip-obj').style.display='none';
+        });
+    });
+
+    // Region label
+    g.append('text')
+      .attr('x',-10).attr('y', cy+4)
+      .text(shortName(d.region))
+      .attr('text-anchor','end').attr('fill','#cbd5e1')
+      .attr('font-size','11px');
+  });
+
+  // X axis
+  g.append('g').attr('transform',`translate(0,${h})`)
+    .call(d3.axisBottom(x).ticks(4).tickFormat(d3.format('.0%')))
+    .selectAll('text').attr('fill','#94a3b8').attr('font-size','10px');
+  g.selectAll('.domain').attr('stroke','#2a3548');
+  g.selectAll('.tick line').attr('stroke','#2a3548');
+
+  g.append('text').attr('x',w/2).attr('y',h+34)
+    .text('Posición relativa dentro del rango global (0% = peor, 100% = mejor)')
+    .attr('text-anchor','middle').attr('fill','#64748b').attr('font-size','10px');
+
+  // Legend top
+  const legG = g.append('g').attr('transform',`translate(${w/2-130}, -32)`);
+  labels.forEach((lbl,i) => {
+    legG.append('circle').attr('cx',i*130).attr('cy',0).attr('r',6)
+      .attr('fill',colors[i]).attr('stroke','#0a0e17').attr('stroke-width',1.5);
+    legG.append('text').attr('x',i*130+12).attr('y',4)
+      .text(lbl).attr('fill','#94a3b8').attr('font-size','10px');
+  });
+}
+
+function drawPanel2() {
+  drawT1(); drawT2();
+}
+
+function drawPanel3() {
+  drawT3(); drawT4(); drawT5();
+}
+
+// ===== INIT =====
+window.addEventListener('resize', () => {
+  const i = +document.querySelector('.tab.active').dataset.tab;
+  _drawFns[i]();
+});
+drawDesc();
+</script>
+</body>
+</html>
