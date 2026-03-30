@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPI Consulting — Dashboard Analítico</title>
+<title>GPI Consulting Dashboard Analítico</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Space+Mono:wght@400;700&display=swap');
@@ -125,8 +125,8 @@ svg text { font-family:'DM Sans',sans-serif; }
 <body>
 
 <div class="header">
-  <h1><span>GPI</span> Consulting — Dashboard Analítico</h1>
-  <p>Paz · Felicidad · Desempeño Olímpico — Periodo 2015 a 2019</p>
+  <h1><span>GPI</span> Consulting Dashboard Analítico</h1>
+  <p>Paz, Felicidad y Desempeño Olímpico en el Periodo 2015 a 2019</p>
 </div>
 
 <div class="tabs" id="tabs">
@@ -435,9 +435,6 @@ function drawT1() {
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('d')))
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.append('g').call(d3.axisLeft(y).ticks(6))
-  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-48)
-    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px')
-    .text('Overall Peace Score');
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.selectAll('.domain').attr('stroke','#2a3548');
   g.selectAll('.tick line').attr('stroke','#2a3548');
@@ -505,9 +502,6 @@ function drawT2() {
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x))
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','12px').attr('font-weight',600);
   g.append('g').call(d3.axisLeft(y).ticks(6))
-  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-48)
-    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px')
-    .text('Overall Peace Score');
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.selectAll('.domain').attr('stroke','#2a3548');
   g.selectAll('.tick line').attr('stroke','#2a3548');
@@ -663,7 +657,7 @@ function drawT3() {
       document.getElementById('tip-t3').style.display='none';
     });
 
-  // 2-3 labels per GDP quartile — pick top medal-getters per quartile
+  // 2-3 labels per GDP quartile, pick top medal-getters per quartile
   const getQuartile = (d) => {
     if(d.g <= d3.quantile([...data].map(x=>x.g).sort(d3.ascending), 0.25)) return 0;
     if(d.g <= d3.quantile([...data].map(x=>x.g).sort(d3.ascending), 0.50)) return 1;
@@ -751,9 +745,6 @@ function drawT4() {
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(6))
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.append('g').call(d3.axisLeft(y).ticks(6))
-  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-48)
-    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px')
-    .text('Overall Peace Score');
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.selectAll('.domain').attr('stroke','#2a3548');
   g.selectAll('.tick line').attr('stroke','#2a3548');
