@@ -435,6 +435,9 @@ function drawT1() {
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('d')))
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.append('g').call(d3.axisLeft(y).ticks(6))
+  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-48)
+    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px')
+    .text('Overall Peace Score');
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.selectAll('.domain').attr('stroke','#2a3548');
   g.selectAll('.tick line').attr('stroke','#2a3548');
@@ -502,6 +505,9 @@ function drawT2() {
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x))
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','12px').attr('font-weight',600);
   g.append('g').call(d3.axisLeft(y).ticks(6))
+  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-48)
+    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px')
+    .text('Overall Peace Score');
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.selectAll('.domain').attr('stroke','#2a3548');
   g.selectAll('.tick line').attr('stroke','#2a3548');
@@ -745,6 +751,9 @@ function drawT4() {
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(6))
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.append('g').call(d3.axisLeft(y).ticks(6))
+  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-48)
+    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px')
+    .text('Overall Peace Score');
     .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
   g.selectAll('.domain').attr('stroke','#2a3548');
   g.selectAll('.tick line').attr('stroke','#2a3548');
@@ -831,8 +840,24 @@ function drawT5() {
     const lx = (R+25)*Math.cos(a), ly = (R+25)*Math.sin(a);
     g.append('line').attr('x1',0).attr('y1',0).attr('x2',R*Math.cos(a)).attr('y2',R*Math.sin(a))
       .attr('stroke','#2a3548').attr('stroke-width',1);
-    g.append('text').attr('x',lx).attr('y',ly+4).attr('text-anchor','middle')
-      .attr('fill','#94a3b8').attr('font-size','11px').attr('font-weight',600).text(dim.label);
+    const axLabel = g.append('text').attr('x',lx).attr('y',ly+4).attr('text-anchor','middle')
+      .attr('fill','#94a3b8').attr('font-size','11px').attr('font-weight',600)
+      .attr('cursor','pointer').text(dim.label);
+
+    axLabel.on('mouseover', function(ev) {
+        const tip = document.getElementById('tip-t5');
+        tip.style.display = 'block';
+        const scaleNote = dim.invert
+          ? `Escala invertida. Máx real: ${dim.max} (más bajo = más pacífico)`
+          : `Rango: 0 a ${dim.max}`;
+        tip.innerHTML = `<div class="tt-title">${dim.label}</div><div class="tt-row">${scaleNote}</div>`;
+        const rect = svg.node().getBoundingClientRect();
+        tip.style.left = (ev.clientX - rect.left + 14) + 'px';
+        tip.style.top  = (ev.clientY - rect.top  - 50) + 'px';
+      })
+      .on('mouseout', function() {
+        document.getElementById('tip-t5').style.display = 'none';
+      });
   });
 
   // Default: show Canada, Norway, Russia, China
@@ -854,8 +879,30 @@ function drawT5() {
       g.append('polygon').attr('class','radar-path').attr('points',pts.map(p=>p.join(',')).join(' '))
         .attr('fill',color).attr('fill-opacity',0.1).attr('stroke',color).attr('stroke-width',2.5);
       pts.forEach((p,i) => {
-        g.append('circle').attr('class','radar-dot').attr('cx',p[0]).attr('cy',p[1]).attr('r',4)
-          .attr('fill',color).attr('stroke','#fff').attr('stroke-width',1);
+        const dim   = dims[i];
+        const rawVal = country[dim.key] || 0;
+        const label  = dim.invert
+          ? `${dim.label}: ${rawVal.toFixed ? rawVal.toFixed(3) : rawVal} (menor = mejor)`
+          : `${dim.label}: ${dim.key==='medals' ? rawVal : rawVal.toFixed ? rawVal.toFixed(3) : rawVal}`;
+
+        g.append('circle').attr('class','radar-dot')
+          .attr('cx',p[0]).attr('cy',p[1]).attr('r',5)
+          .attr('fill',color).attr('stroke','#0a0e17').attr('stroke-width',1.5)
+          .attr('cursor','pointer')
+          .on('mouseover', function(ev) {
+            d3.select(this).attr('r',9).attr('stroke','#fff').attr('stroke-width',2);
+            const tip = document.getElementById('tip-t5');
+            tip.style.display = 'block';
+            tip.innerHTML = `<div class="tt-title">${country.country}</div>
+              <div class="tt-row">${label}</div>`;
+            const rect = svg.node().getBoundingClientRect();
+            tip.style.left = (ev.clientX - rect.left + 14) + 'px';
+            tip.style.top  = (ev.clientY - rect.top  - 50) + 'px';
+          })
+          .on('mouseout', function() {
+            d3.select(this).attr('r',5).attr('stroke','#0a0e17').attr('stroke-width',1.5);
+            document.getElementById('tip-t5').style.display = 'none';
+          });
       });
     });
   }
