@@ -126,7 +126,7 @@ svg text { font-family:'DM Sans',sans-serif; }
 
 <div class="header">
   <h1><span>GPI</span> Consulting Dashboard Analítico</h1>
-  <p>Paz, Felicidad y Desempeño Olímpico en el Periodo 2015 a 2019</p>
+  <p>Paz · Felicidad · Desempeño Olímpico · Periodo 2015 a 2019</p>
 </div>
 
 <div class="tabs" id="tabs">
@@ -288,8 +288,8 @@ svg text { font-family:'DM Sans',sans-serif; }
   </div>
 
   <div style="margin-bottom:2rem">
-    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:0.5rem">OE3: GDP per Cápita vs Medallas Olímpicas</h3>
-    <p style="color:var(--text2); font-size:0.83rem; margin-bottom:0.8rem">Países ordenados por GDP per cápita. La altura del lollipop representa el total de medallas y el color refleja el Happiness Score.</p>
+    <h3 style="font-size:1.25rem; color:var(--accent2); margin-bottom:0.6rem">OE3: GDP per Cápita vs Medallas Olímpicas</h3>
+    <p style="color:var(--text2); font-size:0.95rem; margin-bottom:0.8rem; line-height:1.6">Países ordenados por GDP per cápita. La altura del lollipop representa el total de medallas y el color refleja el Happiness Score.</p>
     <div class="filters" style="margin-bottom:0.6rem">
       <span class="filter-label">Cuartil GDP</span>
       <select class="filter-select" id="p3-gdp" onchange="drawT3()">
@@ -306,7 +306,7 @@ svg text { font-family:'DM Sans',sans-serif; }
       <button class="filter-btn" data-min="30" onclick="p3MinMed(30,this)">30+</button>
     </div>
     <div class="chart-container">
-      <svg id="chart-t3" width="100%" height="380"></svg>
+      <svg id="chart-t3" width="100%" height="500"></svg>
       <div class="tooltip" id="tip-t3"></div>
     </div>
   </div>
@@ -561,8 +561,8 @@ function drawT2() {
 function drawT3() {
   const svg = d3.select('#chart-t3');
   svg.selectAll('*').remove();
-  const W = getW('chart-t3'), H = 480;
-  const m = {t:40,r:30,b:100,l:65};
+  const W = getW('chart-t3'), H = 520;
+  const m = {t:55,r:30,b:100,l:65};
   const w = W-m.l-m.r, h = H-m.t-m.b;
   svg.attr('viewBox',`0 0 ${W} ${H}`);
   const g = svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
@@ -695,11 +695,13 @@ function drawT3() {
   grad.append('stop').attr('offset','0%').attr('stop-color','#ef4444');
   grad.append('stop').attr('offset','50%').attr('stop-color','#fbbf24');
   grad.append('stop').attr('offset','100%').attr('stop-color','#34d399');
-  svg.append('rect').attr('x',m.l).attr('y',H-28).attr('width',120).attr('height',8)
-    .attr('fill','url(#happyGrad)').attr('rx',3);
-  svg.append('text').attr('x',m.l).attr('y',H-32).attr('fill','#94a3b8').attr('font-size','9px').text('Happiness Score:');
-  svg.append('text').attr('x',m.l).attr('y',H-14).attr('fill','#94a3b8').attr('font-size','8.5px').text('Bajo');
-  svg.append('text').attr('x',m.l+120).attr('y',H-14).attr('fill','#94a3b8').attr('font-size','8.5px').attr('text-anchor','end').text('Alto');
+
+  const legX = W - 280, legY = 15;
+  svg.append('text').attr('x',legX).attr('y',legY).attr('fill','#e2e8f0').attr('font-size','12px').attr('font-weight',600).text('Happiness Score');
+  svg.append('rect').attr('x',legX).attr('y',legY + 8).attr('width',220).attr('height',14)
+    .attr('fill','url(#happyGrad)').attr('rx',4);
+  svg.append('text').attr('x',legX).attr('y',legY + 36).attr('fill','#94a3b8').attr('font-size','11px').text('Bajo (3.0)');
+  svg.append('text').attr('x',legX+220).attr('y',legY + 36).attr('fill','#94a3b8').attr('font-size','11px').attr('text-anchor','end').text('Alto (7.5)');
 }
 
 
