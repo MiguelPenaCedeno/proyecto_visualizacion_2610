@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPI Consulting Dashboard Analítico</title>
+<title>Global Policy Insights</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Space+Mono:wght@400;700&display=swap');
@@ -126,7 +126,7 @@ svg text { font-family:'DM Sans',sans-serif; }
 
 <div class="header">
   <h1><span>GPI</span> Consulting Dashboard Analítico</h1>
-  <p>Paz · Felicidad · Desempeño Olímpico · Periodo 2015 a 2019</p>
+  <p>Paz, felicidad y desempeño olímpico en el periodo 2015 a 2019</p>
 </div>
 
 <div class="tabs" id="tabs">
@@ -613,11 +613,9 @@ function drawT3() {
     const toCountry = data[toIdx-1].c;
     const bx1 = x(fromCountry);
     const bx2 = x(toCountry) + x.bandwidth();
-    g.append('rect').attr('x',bx1).attr('y',0).attr('width',bx2-bx1).attr('height',h)
-      .attr('fill',bandColors[qi]);
     g.append('text').attr('x',(bx1+bx2)/2).attr('y',-20)
       .text(bandLabels[qi]).attr('text-anchor','middle')
-      .attr('fill',['#ef4444','#fbbf24','#38bdf8','#34d399'][qi])
+      .attr('fill','#94a3b8')
       .attr('font-size','10px').attr('font-weight',600);
     // vertical divider
     if(qi>0) g.append('line').attr('x1',bx1).attr('x2',bx1).attr('y1',-28).attr('y2',h)
@@ -687,7 +685,7 @@ function drawT3() {
     .text('Total de medallas olímpicas');
   g.append('text').attr('x',w/2).attr('y',h+30).attr('text-anchor','middle')
     .attr('fill','#94a3b8').attr('font-size','11px')
-    .text('Países ordenados por GDP per Cápita (menor → mayor) →');
+    .text('Países ordenados por GDP per Cápita, de menor a mayor');
 
   // Color legend
   const defs = svg.append('defs');
@@ -696,7 +694,7 @@ function drawT3() {
   grad.append('stop').attr('offset','50%').attr('stop-color','#fbbf24');
   grad.append('stop').attr('offset','100%').attr('stop-color','#34d399');
 
-  const legX = W - 280, legY = 15;
+  const legX = W - 280, legY = H - 45;
   svg.append('text').attr('x',legX).attr('y',legY).attr('fill','#e2e8f0').attr('font-size','12px').attr('font-weight',600).text('Happiness Score');
   svg.append('rect').attr('x',legX).attr('y',legY + 8).attr('width',220).attr('height',14)
     .attr('fill','url(#happyGrad)').attr('rx',4);
@@ -786,7 +784,7 @@ function drawT4() {
     .text(d=>d.c).attr('fill','#cbd5e1').attr('font-size','8.5px');
 
   g.append('text').attr('x',w/2).attr('y',h+40).attr('text-anchor','middle')
-    .attr('fill','#94a3b8').attr('font-size','11px').text('Overall Peace Score (menor = más pacífico) →');
+    .attr('fill','#94a3b8').attr('font-size','11px').text('Overall Peace Score');
   g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-45)
     .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px').text('← Happiness Score');
 }
