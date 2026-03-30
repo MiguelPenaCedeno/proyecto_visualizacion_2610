@@ -1,0 +1,816 @@
+Country;year;Overall Scores;Militarian
+Afghanistan;2015;3.254;2.458
+Angola;2015;1.922;1.897
+Albania;2015;1.824;1.876
+United Arab Emirates;2015;1.793;2.378
+Argentina;2015;1.929;1.649
+Armenia;2015;2.032;1.894
+Australia;2015;1.375;1.656
+Austria;2015;1.247;1.394
+Azerbaijan;2015;2.293;2.331
+Burundi;2015;2.268;1.973
+Belgium;2015;1.441;1.469
+Benin;2015;1.872;1.904
+Burkina Faso;2015;1.925;1.698
+Bangladesh;2015;1.982;1.56
+Bulgaria;2015;1.638;1.699
+Bahrain;2015;2.132;1.904
+Bosnia and Herzegovina;2015;1.802;1.667
+Belarus;2015;2.114;2.159
+Bolivia;2015;1.966;2.044
+Brazil;2015;2.09;1.901
+Bhutan;2015;1.543;1.345
+Botswana;2015;1.763;1.807
+Central African Republic;2015;3.156;2.166
+Canada;2015;1.329;1.535
+Switzerland;2015;1.36;2.024
+Chile;2015;1.608;1.711
+China;2015;2.111;2.08
+Cote d' Ivoire;2015;2.059;1.628
+Cameroon;2015;2.234;1.751
+Democratic Republic of the Congo;2015;3.0;2.194
+Republic of the Congo;2015;2.152;2.028
+Colombia;2015;2.623;1.83
+Costa Rica;2015;1.693;1.582
+Cuba;2015;2.033;1.512
+Cyprus;2015;1.897;1.663
+Czech Republic;2015;1.383;1.192
+Germany;2015;1.429;1.807
+Djibouti;2015;2.075;2.219
+Denmark;2015;1.229;1.303
+Dominican Republic;2015;2.037;1.851
+Algeria;2015;2.174;2.048
+Ecuador;2015;1.966;1.665
+Egypt;2015;2.354;1.84
+Eritrea;2015;2.462;1.804
+Spain;2015;1.49;1.684
+Estonia;2015;1.629;1.457
+Ethiopia;2015;2.233;1.838
+Finland;2015;1.353;1.912
+France;2015;1.735;2.666
+Gabon;2015;1.989;1.68
+United Kingdom;2015;1.714;2.596
+Georgia;2015;2.028;1.779
+Ghana;2015;1.711;1.765
+Guinea;2015;2.205;2.182
+The Gambia;2015;2.062;1.573
+Guinea-Bissau;2015;2.066;2.251
+Equatorial Guinea;2015;1.836;1.893
+Greece;2015;1.895;2.025
+Guatemala;2015;2.074;1.703
+Guyana;2015;2.03;1.499
+Honduras;2015;2.075;1.76
+Croatia;2015;1.558;1.651
+Haiti;2015;2.033;1.65
+Hungary;2015;1.493;1.128
+Indonesia;2015;1.662;1.44
+India;2015;2.312;2.432
+Ireland;2015;1.42;1.404
+Iran;2015;2.406;2.025
+Iraq;2015;3.158;2.268
+Iceland;2015;1.164;1.262
+Israel;2015;2.565;3.695
+Italy;2015;1.668;1.919
+Jamaica;2015;1.984;1.942
+Jordan;2015;1.926;2.057
+Japan;2015;1.342;1.352
+Kazakhstan;2015;1.973;1.714
+Kenya;2015;2.342;1.71
+Kyrgyz Republic;2015;2.182;1.967
+Cambodia;2015;2.083;2.273
+South Korea;2015;1.746;1.945
+Kosovo;2015;1.883;1.571
+Kuwait;2015;1.665;2.006
+Laos;2015;1.734;1.795
+Lebanon;2015;2.529;2.227
+Liberia;2015;1.897;1.807
+Libya;2015;2.727;2.189
+Sri Lanka;2015;2.142;2.181
+Lesotho;2015;1.866;1.746
+Lithuania;2015;1.698;1.374
+Latvia;2015;1.614;1.334
+Morocco;2015;2.058;2.017
+Moldova;2015;1.887;1.355
+Madagascar;2015;1.815;1.588
+Mexico;2015;2.225;1.637
+North Macedonia;2015;1.911;1.844
+Mali;2015;2.493;2.018
+Myanmar;2015;2.184;1.851
+Montenegro;2015;1.805;1.717
+Mongolia;2015;1.715;1.429
+Mozambique;2015;2.012;1.628
+Mauritania;2015;2.181;2.16
+Mauritius;2015;1.553;1.445
+Malawi;2015;1.74;1.608
+Malaysia;2015;1.644;1.303
+Namibia;2015;1.956;1.84
+Niger;2015;2.205;1.84
+Nigeria;2015;2.652;1.788
+Nicaragua;2015;1.948;1.679
+Netherlands;2015;1.467;2.116
+Norway;2015;1.471;2.384
+Nepal;2015;1.882;1.616
+New Zealand;2015;1.309;1.28
+Oman;2015;2.031;2.825
+Pakistan;2015;2.97;2.542
+Panama;2015;1.92;1.61
+Peru;2015;1.999;1.761
+Philippines;2015;2.329;1.64
+Papua New Guinea;2015;1.904;1.841
+Poland;2015;1.458;1.512
+North Korea;2015;2.914;3.265
+Portugal;2015;1.39;1.376
+Paraguay;2015;2.048;1.798
+Palestine;2015;;0.0
+Qatar;2015;1.619;2.074
+Romania;2015;1.505;1.762
+Russia;2015;2.984;3.284
+Rwanda;2015;2.184;1.901
+Saudi Arabia;2015;2.081;2.461
+Sudan;2015;3.053;2.449
+Senegal;2015;1.796;1.54
+Singapore;2015;1.353;1.912
+Sierra Leone;2015;1.808;1.597
+El Salvador;2015;2.178;1.814
+Somalia;2015;3.086;2.201
+Serbia;2015;1.82;1.669
+South Sudan;2015;3.262;2.274
+Slovakia;2015;1.513;1.318
+Slovenia;2015;1.379;1.367
+Sweden;2015;1.39;2.098
+Eswatini;2015;2.017;1.717
+Syria;2015;3.295;2.576
+Chad;2015;2.454;2.304
+Togo;2015;1.833;1.877
+Thailand;2015;2.266;1.421
+Tajikistan;2015;2.101;1.783
+Turkmenistan;2015;2.108;1.913
+Timor-Leste;2015;1.861;1.978
+Trinidad and Tobago;2015;2.024;1.953
+Tunisia;2015;2.008;1.539
+Turkiye;2015;2.355;1.931
+Taiwan;2015;1.704;1.843
+Tanzania;2015;1.874;1.445
+Uganda;2015;2.262;1.917
+Ukraine;2015;2.723;2.249
+Uruguay;2015;1.661;1.752
+United States of America;2015;2.234;3.037
+Uzbekistan;2015;2.12;2.136
+Venezuela;2015;2.485;2.28
+Vietnam;2015;1.899;1.974
+Yemen;2015;2.765;2.413
+South Africa;2015;2.416;1.706
+Zambia;2015;1.818;1.793
+Zimbabwe;2015;2.158;1.797
+Afghanistan;2016;3.338;2.412
+Angola;2016;1.96;2.007
+Albania;2016;1.779;1.77
+United Arab Emirates;2016;1.826;2.364
+Argentina;2016;1.954;1.562
+Armenia;2016;2.037;1.939
+Australia;2016;1.406;1.65
+Austria;2016;1.243;1.354
+Azerbaijan;2016;2.275;2.309
+Burundi;2016;2.541;2.024
+Belgium;2016;1.459;1.448
+Benin;2016;1.921;1.952
+Burkina Faso;2016;2.015;1.896
+Bangladesh;2016;1.938;1.582
+Bulgaria;2016;1.612;1.678
+Bahrain;2016;2.191;1.889
+Bosnia and Herzegovina;2016;1.794;1.583
+Belarus;2016;2.059;2.026
+Bolivia;2016;1.891;1.956
+Brazil;2016;2.14;2.051
+Bhutan;2016;1.469;1.411
+Botswana;2016;1.728;1.685
+Central African Republic;2016;3.076;1.958
+Canada;2016;1.324;1.556
+Switzerland;2016;1.355;2.012
+Chile;2016;1.572;1.655
+China;2016;2.102;2.054
+Cote d' Ivoire;2016;2.18;1.838
+Cameroon;2016;2.41;1.582
+Democratic Republic of the Congo;2016;2.898;2.024
+Republic of the Congo;2016;2.23;2.162
+Colombia;2016;2.58;1.845
+Costa Rica;2016;1.695;1.578
+Cuba;2016;2.02;1.487
+Cyprus;2016;1.913;1.562
+Czech Republic;2016;1.329;1.245
+Germany;2016;1.44;1.763
+Djibouti;2016;2.151;2.241
+Denmark;2016;1.232;1.319
+Dominican Republic;2016;2.038;1.894
+Algeria;2016;2.202;2.07
+Ecuador;2016;1.95;1.623
+Egypt;2016;2.379;1.84
+Eritrea;2016;2.509;1.89
+Spain;2016;1.495;1.801
+Estonia;2016;1.614;1.451
+Ethiopia;2016;2.238;1.707
+Finland;2016;1.373;1.943
+France;2016;1.8;2.766
+Gabon;2016;2.007;1.781
+United Kingdom;2016;1.712;2.573
+Georgia;2016;2.028;1.766
+Ghana;2016;1.751;1.795
+Guinea;2016;2.114;2.165
+The Gambia;2016;2.04;1.457
+Guinea-Bissau;2016;2.06;2.028
+Equatorial Guinea;2016;1.805;1.771
+Greece;2016;1.915;2.026
+Guatemala;2016;2.124;1.685
+Guyana;2016;2.05;1.535
+Honduras;2016;2.124;1.709
+Croatia;2016;1.58;1.691
+Haiti;2016;2.014;1.766
+Hungary;2016;1.473;1.127
+Indonesia;2016;1.676;1.361
+India;2016;2.371;2.461
+Ireland;2016;1.416;1.38
+Iran;2016;2.334;1.923
+Iraq;2016;3.368;2.537
+Iceland;2016;1.163;1.26
+Israel;2016;2.642;3.798
+Italy;2016;1.662;1.924
+Jamaica;2016;1.956;1.889
+Jordan;2016;1.94;1.963
+Japan;2016;1.371;1.309
+Kazakhstan;2016;1.97;1.749
+Kenya;2016;2.354;1.744
+Kyrgyz Republic;2016;2.15;2.013
+Cambodia;2016;2.071;2.196
+South Korea;2016;1.788;1.891
+Kosovo;2016;1.93;1.574
+Kuwait;2016;1.723;2.033
+Laos;2016;1.811;1.707
+Lebanon;2016;2.559;2.052
+Liberia;2016;1.933;1.921
+Libya;2016;2.974;2.257
+Sri Lanka;2016;2.041;2.249
+Lesotho;2016;1.938;1.855
+Lithuania;2016;1.725;1.388
+Latvia;2016;1.575;1.328
+Morocco;2016;2.07;1.976
+Moldova;2016;1.93;1.308
+Madagascar;2016;1.783;1.508
+Mexico;2016;2.274;1.682
+North Macedonia;2016;1.98;1.933
+Mali;2016;2.327;1.977
+Myanmar;2016;2.041;1.763
+Montenegro;2016;1.763;1.516
+Mongolia;2016;1.795;1.647
+Mozambique;2016;1.974;1.415
+Mauritania;2016;2.15;1.938
+Mauritius;2016;1.545;1.472
+Malawi;2016;1.877;1.791
+Malaysia;2016;1.614;1.257
+Namibia;2016;1.898;1.806
+Niger;2016;2.148;1.77
+Nigeria;2016;2.837;1.676
+Nicaragua;2016;1.892;1.635
+Netherlands;2016;1.463;2.098
+Norway;2016;1.479;2.38
+Nepal;2016;1.982;1.802
+New Zealand;2016;1.289;1.289
+Oman;2016;1.983;2.736
+Pakistan;2016;2.985;2.539
+Panama;2016;1.839;1.525
+Peru;2016;1.963;1.657
+Philippines;2016;2.319;1.671
+Papua New Guinea;2016;1.956;1.828
+Poland;2016;1.511;1.581
+North Korea;2016;2.884;3.134
+Portugal;2016;1.301;1.209
+Paraguay;2016;2.02;1.726
+Palestine;2016;2.507;1.974
+Qatar;2016;1.58;2.045
+Romania;2016;1.546;1.91
+Russia;2016;2.979;3.302
+Rwanda;2016;2.191;1.897
+Saudi Arabia;2016;2.205;2.56
+Sudan;2016;3.044;2.469
+Senegal;2016;1.798;1.48
+Singapore;2016;1.391;2.061
+Sierra Leone;2016;1.76;1.702
+El Salvador;2016;2.124;1.756
+Somalia;2016;3.118;2.233
+Serbia;2016;1.761;1.63
+South Sudan;2016;3.275;2.247
+Slovakia;2016;1.578;1.52
+Slovenia;2016;1.342;1.243
+Sweden;2016;1.441;2.148
+Eswatini;2016;1.974;1.805
+Syria;2016;3.33;2.593
+Chad;2016;2.389;2.065
+Togo;2016;1.887;1.855
+Thailand;2016;2.161;1.45
+Tajikistan;2016;2.072;1.938
+Turkmenistan;2016;2.124;1.974
+Timor-Leste;2016;1.83;1.825
+Trinidad and Tobago;2016;2.021;1.958
+Tunisia;2016;1.95;1.582
+Turkiye;2016;2.432;1.961
+Taiwan;2016;1.708;1.876
+Tanzania;2016;1.891;1.446
+Uganda;2016;2.191;1.701
+Ukraine;2016;2.964;2.537
+Uruguay;2016;1.648;1.658
+United States of America;2016;2.205;3.033
+Uzbekistan;2016;2.082;1.932
+Venezuela;2016;2.622;2.275
+Vietnam;2016;1.871;1.978
+Yemen;2016;3.049;2.386
+South Africa;2016;2.327;1.685
+Zambia;2016;1.794;1.621
+Zimbabwe;2016;2.139;1.981
+Afghanistan;2017;3.386;2.433
+Angola;2017;1.936;1.796
+Albania;2017;1.786;1.775
+United Arab Emirates;2017;1.929;2.62
+Argentina;2017;1.934;1.543
+Armenia;2017;2.069;1.986
+Australia;2017;1.421;1.612
+Austria;2017;1.309;1.382
+Azerbaijan;2017;2.289;2.265
+Burundi;2017;2.569;1.874
+Belgium;2017;1.483;1.577
+Benin;2017;1.995;2.035
+Burkina Faso;2017;2.037;1.907
+Bangladesh;2017;1.953;1.543
+Bulgaria;2017;1.595;1.686
+Bahrain;2017;2.298;2.08
+Bosnia and Herzegovina;2017;1.897;1.531
+Belarus;2017;2.007;2.039
+Bolivia;2017;1.937;2.035
+Brazil;2017;2.203;2.143
+Bhutan;2017;1.502;1.37
+Botswana;2017;1.737;1.652
+Central African Republic;2017;2.991;2.124
+Canada;2017;1.323;1.518
+Switzerland;2017;1.342;2.019
+Chile;2017;1.56;1.595
+China;2017;2.123;2.048
+Cote d' Ivoire;2017;2.156;1.957
+Cameroon;2017;2.435;1.762
+Democratic Republic of the Congo;2017;2.878;2.121
+Republic of the Congo;2017;2.271;2.247
+Colombia;2017;2.646;2.024
+Costa Rica;2017;1.698;1.702
+Cuba;2017;2.011;1.486
+Cyprus;2017;1.906;1.513
+Czech Republic;2017;1.334;1.297
+Germany;2017;1.476;1.836
+Djibouti;2017;2.112;2.262
+Denmark;2017;1.312;1.341
+Dominican Republic;2017;2.029;1.885
+Algeria;2017;2.171;2.147
+Ecuador;2017;1.844;1.569
+Egypt;2017;2.386;1.853
+Eritrea;2017;2.545;1.784
+Spain;2017;1.471;1.726
+Estonia;2017;1.597;1.485
+Ethiopia;2017;2.358;1.748
+Finland;2017;1.432;1.964
+France;2017;1.909;2.754
+Gabon;2017;2.034;1.83
+United Kingdom;2017;1.721;2.58
+Georgia;2017;2.055;1.767
+Ghana;2017;1.774;1.703
+Guinea;2017;2.059;2.193
+The Gambia;2017;2.178;1.621
+Guinea-Bissau;2017;2.126;2.148
+Equatorial Guinea;2017;1.812;1.717
+Greece;2017;1.908;2.052
+Guatemala;2017;2.13;1.728
+Guyana;2017;1.983;1.525
+Honduras;2017;2.088;1.67
+Croatia;2017;1.573;1.626
+Haiti;2017;1.932;1.675
+Hungary;2017;1.546;1.139
+Indonesia;2017;1.712;1.343
+India;2017;2.342;2.441
+Ireland;2017;1.395;1.391
+Iran;2017;2.396;1.907
+Iraq;2017;3.314;2.41
+Iceland;2017;1.1;1.012
+Israel;2017;2.645;3.892
+Italy;2017;1.649;1.913
+Jamaica;2017;1.944;1.818
+Jordan;2017;1.966;1.953
+Japan;2017;1.327;1.298
+Kazakhstan;2017;1.941;1.761
+Kenya;2017;2.33;1.721
+Kyrgyz Republic;2017;2.123;1.881
+Cambodia;2017;2.003;2.039
+South Korea;2017;1.776;1.894
+Kosovo;2017;1.885;1.574
+Kuwait;2017;1.877;2.129
+Laos;2017;1.756;1.68
+Lebanon;2017;2.612;2.259
+Liberia;2017;1.923;1.87
+Libya;2017;2.964;2.362
+Sri Lanka;2017;1.92;2.104
+Lesotho;2017;2.017;1.783
+Lithuania;2017;1.714;1.628
+Latvia;2017;1.57;1.361
+Morocco;2017;1.959;1.787
+Moldova;2017;1.906;1.27
+Madagascar;2017;1.826;1.544
+Mexico;2017;2.388;1.707
+North Macedonia;2017;2.014;1.787
+Mali;2017;2.482;2.094
+Myanmar;2017;2.021;1.71
+Montenegro;2017;1.803;1.501
+Mongolia;2017;1.727;1.526
+Mozambique;2017;1.989;1.769
+Mauritania;2017;2.248;2.051
+Mauritius;2017;1.526;1.438
+Malawi;2017;1.848;1.839
+Malaysia;2017;1.676;1.321
+Namibia;2017;1.847;1.728
+Niger;2017;2.364;1.939
+Nigeria;2017;2.816;1.762
+Nicaragua;2017;1.941;1.706
+Netherlands;2017;1.473;2.092
+Norway;2017;1.467;2.241
+Nepal;2017;2.001;1.848
+New Zealand;2017;1.278;1.273
+Oman;2017;1.898;2.705
+Pakistan;2017;2.878;2.521
+Panama;2017;1.81;1.504
+Peru;2017;1.947;1.62
+Philippines;2017;2.385;1.66
+Papua New Guinea;2017;1.93;1.841
+Poland;2017;1.584;1.543
+North Korea;2017;2.909;3.231
+Portugal;2017;1.279;1.249
+Paraguay;2017;2.006;1.676
+Palestine;2017;2.449;1.991
+Qatar;2017;1.543;2.017
+Romania;2017;1.529;1.805
+Russia;2017;2.97;3.273
+Rwanda;2017;2.067;1.696
+Saudi Arabia;2017;2.389;2.628
+Sudan;2017;2.959;2.26
+Senegal;2017;1.808;1.455
+Singapore;2017;1.398;2.111
+Sierra Leone;2017;1.748;1.531
+El Salvador;2017;2.176;1.773
+Somalia;2017;3.039;2.266
+Serbia;2017;1.807;1.727
+South Sudan;2017;3.242;2.223
+Slovakia;2017;1.599;1.456
+Slovenia;2017;1.339;1.203
+Sweden;2017;1.508;2.113
+Eswatini;2017;1.928;1.693
+Syria;2017;3.379;2.641
+Chad;2017;2.536;2.146
+Togo;2017;1.859;1.757
+Thailand;2017;2.189;1.444
+Tajikistan;2017;2.052;1.812
+Turkmenistan;2017;2.207;2.02
+Timor-Leste;2017;1.794;1.565
+Trinidad and Tobago;2017;2.067;2.122
+Tunisia;2017;1.972;1.579
+Turkiye;2017;2.628;1.955
+Taiwan;2017;1.72;1.87
+Tanzania;2017;1.835;1.446
+Uganda;2017;2.186;1.799
+Ukraine;2017;2.925;2.393
+Uruguay;2017;1.639;1.594
+United States of America;2017;2.314;3.037
+Uzbekistan;2017;2.034;1.819
+Venezuela;2017;2.65;2.227
+Vietnam;2017;1.886;2.006
+Yemen;2017;3.184;2.415
+South Africa;2017;2.319;1.674
+Zambia;2017;1.779;1.778
+Zimbabwe;2017;2.164;2.036
+Afghanistan;2018;3.512;2.477
+Angola;2018;1.988;1.873
+Albania;2018;1.723;1.743
+United Arab Emirates;2018;1.892;2.551
+Argentina;2018;1.911;1.737
+Armenia;2018;2.086;1.98
+Australia;2018;1.418;1.664
+Austria;2018;1.272;1.388
+Azerbaijan;2018;2.264;2.252
+Burundi;2018;2.481;1.548
+Belgium;2018;1.55;1.57
+Benin;2018;1.914;1.815
+Burkina Faso;2018;2.076;1.818
+Bangladesh;2018;2.014;1.48
+Bulgaria;2018;1.576;1.773
+Bahrain;2018;2.288;1.974
+Bosnia and Herzegovina;2018;1.917;1.526
+Belarus;2018;2.031;2.049
+Bolivia;2018;1.986;2.152
+Brazil;2018;2.16;2.112
+Bhutan;2018;1.421;1.387
+Botswana;2018;1.768;1.646
+Central African Republic;2018;3.057;2.262
+Canada;2018;1.323;1.507
+Switzerland;2018;1.4;2.024
+Chile;2018;1.628;1.744
+China;2018;2.061;2.052
+Cote d' Ivoire;2018;2.184;1.741
+Cameroon;2018;2.507;1.849
+Democratic Republic of the Congo;2018;3.091;2.213
+Republic of the Congo;2018;2.304;1.963
+Colombia;2018;2.661;2.142
+Costa Rica;2018;1.74;1.709
+Cuba;2018;1.991;1.475
+Cyprus;2018;1.846;1.587
+Czech Republic;2018;1.339;1.338
+Germany;2018;1.516;1.889
+Djibouti;2018;2.189;2.249
+Denmark;2018;1.31;1.32
+Dominican Republic;2018;2.045;1.733
+Algeria;2018;2.188;2.192
+Ecuador;2018;1.907;1.705
+Egypt;2018;2.414;2.072
+Eritrea;2018;2.645;1.872
+Spain;2018;1.606;1.787
+Estonia;2018;1.609;1.582
+Ethiopia;2018;2.428;1.696
+Finland;2018;1.434;1.893
+France;2018;1.919;2.761
+Gabon;2018;2.079;1.852
+United Kingdom;2018;1.78;2.628
+Georgia;2018;2.051;1.767
+Ghana;2018;1.78;1.736
+Guinea;2018;2.072;2.283
+The Gambia;2018;1.988;1.533
+Guinea-Bissau;2018;2.15;2.284
+Equatorial Guinea;2018;1.859;1.823
+Greece;2018;1.924;2.136
+Guatemala;2018;2.114;1.673
+Guyana;2018;2.035;1.625
+Honduras;2018;2.157;1.867
+Croatia;2018;1.556;1.633
+Haiti;2018;1.975;1.652
+Hungary;2018;1.586;1.145
+Indonesia;2018;1.739;1.465
+India;2018;2.336;2.414
+Ireland;2018;1.348;1.348
+Iran;2018;2.515;1.924
+Iraq;2018;3.225;2.499
+Iceland;2018;1.113;1.052
+Israel;2018;2.654;3.86
+Italy;2018;1.701;1.922
+Jamaica;2018;1.958;1.72
+Jordan;2018;2.057;2.002
+Japan;2018;1.331;1.346
+Kazakhstan;2018;1.942;1.776
+Kenya;2018;2.315;1.673
+Kyrgyz Republic;2018;2.085;1.751
+Cambodia;2018;2.078;2.156
+South Korea;2018;1.795;1.949
+Kosovo;2018;1.959;1.575
+Kuwait;2018;1.788;2.087
+Laos;2018;1.78;1.764
+Lebanon;2018;2.572;2.185
+Liberia;2018;1.858;1.704
+Libya;2018;2.943;2.341
+Sri Lanka;2018;1.934;1.953
+Lesotho;2018;2.101;1.814
+Lithuania;2018;1.702;1.691
+Latvia;2018;1.57;1.392
+Morocco;2018;1.962;1.698
+Moldova;2018;1.888;1.303
+Madagascar;2018;1.788;1.514
+Mexico;2018;2.426;1.78
+North Macedonia;2018;1.93;1.738
+Mali;2018;2.454;2.004
+Myanmar;2018;2.15;1.678
+Montenegro;2018;1.745;1.52
+Mongolia;2018;1.739;1.421
+Mozambique;2018;2.114;1.787
+Mauritania;2018;2.247;1.955
+Mauritius;2018;1.538;1.414
+Malawi;2018;1.839;1.662
+Malaysia;2018;1.623;1.433
+Namibia;2018;1.85;1.698
+Niger;2018;2.381;1.87
+Nigeria;2018;2.685;1.93
+Nicaragua;2018;1.892;1.67
+Netherlands;2018;1.486;2.073
+Norway;2018;1.492;2.297
+Nepal;2018;2.014;1.842
+New Zealand;2018;1.235;1.181
+Oman;2018;1.954;2.819
+Pakistan;2018;2.839;2.568
+Panama;2018;1.828;1.626
+Peru;2018;1.925;1.614
+Philippines;2018;2.376;1.692
+Papua New Guinea;2018;1.952;1.927
+Poland;2018;1.606;1.667
+North Korea;2018;2.894;3.175
+Portugal;2018;1.309;1.305
+Paraguay;2018;2.021;1.868
+Palestine;2018;2.436;1.991
+Qatar;2018;1.751;2.178
+Romania;2018;1.507;1.695
+Russia;2018;3.077;3.291
+Rwanda;2018;2.204;1.802
+Saudi Arabia;2018;2.448;2.671
+Sudan;2018;2.926;2.337
+Senegal;2018;1.717;1.468
+Singapore;2018;1.395;2.037
+Sierra Leone;2018;1.725;1.422
+El Salvador;2018;2.24;1.75
+Somalia;2018;3.083;2.267
+Serbia;2018;1.78;1.669
+South Sudan;2018;3.279;2.495
+Slovakia;2018;1.539;1.367
+Slovenia;2018;1.354;1.275
+Sweden;2018;1.482;1.983
+Eswatini;2018;1.946;1.741
+Syria;2018;3.346;2.376
+Chad;2018;2.387;2.073
+Togo;2018;2.019;1.705
+Thailand;2018;2.147;1.541
+Tajikistan;2018;2.067;1.889
+Turkmenistan;2018;2.205;2.092
+Timor-Leste;2018;1.823;1.763
+Trinidad and Tobago;2018;2.019;2.073
+Tunisia;2018;2.011;1.566
+Turkiye;2018;2.753;1.917
+Taiwan;2018;1.733;1.873
+Tanzania;2018;1.932;1.438
+Uganda;2018;2.263;1.74
+Ukraine;2018;2.793;2.123
+Uruguay;2018;1.729;1.779
+United States of America;2018;2.301;3.074
+Uzbekistan;2018;2.03;2.025
+Venezuela;2018;2.719;2.125
+Vietnam;2018;1.906;2.085
+Yemen;2018;3.195;2.415
+South Africa;2018;2.32;1.663
+Zambia;2018;1.795;1.68
+Zimbabwe;2018;2.2;2.023
+Afghanistan;2019;3.538;2.41
+Angola;2019;1.952;1.764
+Albania;2019;1.733;1.676
+United Arab Emirates;2019;1.886;2.493
+Argentina;2019;1.984;1.755
+Armenia;2019;2.047;1.955
+Australia;2019;1.439;1.755
+Austria;2019;1.259;1.355
+Azerbaijan;2019;2.274;2.207
+Burundi;2019;2.509;1.525
+Belgium;2019;1.474;1.532
+Benin;2019;1.925;1.831
+Burkina Faso;2019;2.198;1.912
+Bangladesh;2019;2.087;1.63
+Bulgaria;2019;1.603;1.702
+Bahrain;2019;2.246;1.921
+Bosnia and Herzegovina;2019;1.884;1.488
+Belarus;2019;2.046;1.908
+Bolivia;2019;1.977;2.135
+Brazil;2019;2.449;2.135
+Bhutan;2019;1.404;1.357
+Botswana;2019;1.801;1.627
+Central African Republic;2019;3.084;2.248
+Canada;2019;1.32;1.498
+Switzerland;2019;1.373;2.024
+Chile;2019;1.654;1.683
+China;2019;1.986;2.024
+Cote d' Ivoire;2019;2.08;1.703
+Cameroon;2019;2.569;1.922
+Democratic Republic of the Congo;2019;3.081;1.994
+Republic of the Congo;2019;2.238;2.0
+Colombia;2019;2.672;1.999
+Costa Rica;2019;1.735;1.66
+Cuba;2019;2.018;1.53
+Cyprus;2019;1.867;1.555
+Czech Republic;2019;1.343;1.353
+Germany;2019;1.5;1.912
+Djibouti;2019;2.126;2.014
+Denmark;2019;1.299;1.338
+Dominican Republic;2019;2.023;1.661
+Algeria;2019;2.213;2.257
+Ecuador;2019;1.943;1.803
+Egypt;2019;2.381;1.994
+Eritrea;2019;2.548;1.969
+Spain;2019;1.677;1.803
+Estonia;2019;1.579;1.544
+Ethiopia;2019;2.439;1.777
+Finland;2019;1.393;1.796
+France;2019;1.829;2.767
+Gabon;2019;2.119;1.923
+United Kingdom;2019;1.711;2.546
+Georgia;2019;1.994;1.817
+Ghana;2019;1.776;1.854
+Guinea;2019;2.029;2.045
+The Gambia;2019;1.909;1.707
+Guinea-Bissau;2019;2.08;2.278
+Equatorial Guinea;2019;1.876;1.943
+Greece;2019;1.9;2.102
+Guatemala;2019;2.193;1.8
+Guyana;2019;2.083;1.594
+Honduras;2019;2.221;1.984
+Croatia;2019;1.568;1.585
+Haiti;2019;2.047;1.799
+Hungary;2019;1.568;1.146
+Indonesia;2019;1.741;1.387
+India;2019;2.418;2.565
+Ireland;2019;1.34;1.307
+Iran;2019;2.525;1.858
+Iraq;2019;3.18;2.325
+Iceland;2019;1.093;1.032
+Israel;2019;2.672;3.836
+Italy;2019;1.676;1.96
+Jamaica;2019;1.943;1.687
+Jordan;2019;1.904;1.94
+Japan;2019;1.356;1.309
+Kazakhstan;2019;1.903;1.802
+Kenya;2019;2.294;1.794
+Kyrgyz Republic;2019;2.042;1.659
+Cambodia;2019;2.017;2.039
+South Korea;2019;1.794;2.042
+Kosovo;2019;1.966;1.576
+Kuwait;2019;1.762;2.062
+Laos;2019;1.756;1.705
+Lebanon;2019;2.673;2.3
+Liberia;2019;1.802;1.594
+Libya;2019;2.959;2.347
+Sri Lanka;2019;1.989;1.87
+Lesotho;2019;2.152;1.962
+Lithuania;2019;1.67;1.683
+Latvia;2019;1.597;1.429
+Morocco;2019;2.082;1.85
+Moldova;2019;1.919;1.242
+Madagascar;2019;1.768;1.423
+Mexico;2019;2.46;1.723
+North Macedonia;2019;1.793;1.705
+Mali;2019;2.53;1.872
+Myanmar;2019;2.26;1.562
+Montenegro;2019;1.81;1.545
+Mongolia;2019;1.763;1.39
+Mozambique;2019;2.069;1.937
+Mauritania;2019;2.228;1.825
+Mauritius;2019;1.541;1.5
+Malawi;2019;1.819;1.627
+Malaysia;2019;1.595;1.311
+Namibia;2019;1.886;1.824
+Niger;2019;2.322;1.74
+Nigeria;2019;2.716;2.026
+Nicaragua;2019;2.261;1.658
+Netherlands;2019;1.49;2.044
+Norway;2019;1.503;2.389
+Nepal;2019;2.001;1.93
+New Zealand;2019;1.285;1.179
+Oman;2019;1.928;2.715
+Pakistan;2019;2.799;2.543
+Panama;2019;1.815;1.506
+Peru;2019;1.939;1.747
+Philippines;2019;2.407;1.666
+Papua New Guinea;2019;1.939;1.735
+Poland;2019;1.58;1.575
+North Korea;2019;2.865;3.057
+Portugal;2019;1.277;1.269
+Paraguay;2019;2.096;1.891
+Palestine;2019;2.418;1.991
+Qatar;2019;1.639;2.04
+Romania;2019;1.543;1.78
+Russia;2019;3.043;3.237
+Rwanda;2019;1.95;1.613
+Saudi Arabia;2019;2.405;2.599
+Sudan;2019;2.777;2.053
+Senegal;2019;1.783;1.471
+Singapore;2019;1.346;2.02
+Sierra Leone;2019;1.817;1.619
+El Salvador;2019;2.222;1.73
+Somalia;2019;3.005;2.26
+Serbia;2019;1.751;1.659
+South Sudan;2019;3.272;2.476
+Slovakia;2019;1.519;1.386
+Slovenia;2019;1.319;1.205
+Sweden;2019;1.523;1.849
+Eswatini;2019;1.887;1.627
+Syria;2019;3.298;2.216
+Chad;2019;2.506;2.104
+Togo;2019;2.106;1.756
+Thailand;2019;2.181;1.499
+Tajikistan;2019;2.144;1.75
+Turkmenistan;2019;2.223;2.111
+Timor-Leste;2019;1.759;1.621
+Trinidad and Tobago;2019;2.045;2.161
+Tunisia;2019;1.928;1.633
+Turkiye;2019;2.736;1.928
+Taiwan;2019;1.718;1.839
+Tanzania;2019;1.916;1.504
+Uganda;2019;2.238;1.791
+Ukraine;2019;2.752;2.065
+Uruguay;2019;1.679;1.653
+United States of America;2019;2.395;3.104
+Uzbekistan;2019;2.044;2.046
+Venezuela;2019;2.734;1.817
+Vietnam;2019;1.902;2.036
+Yemen;2019;3.34;2.445
+South Africa;2019;2.442;1.838
+Zambia;2019;1.773;1.6
+Zimbabwe;2019;2.31;2.079
