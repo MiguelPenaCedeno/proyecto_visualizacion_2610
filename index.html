@@ -489,7 +489,8 @@ function drawT2() {
     grpFilter === 'medals'   ? k === 'Con medallas' :
                                k === 'Sin medallas'
   );
-  const colors = ['#38bdf8','#f472b6'];
+  const colorMap = {'Con medallas': '#38bdf8', 'Sin medallas': '#f472b6'};
+  const colors = groups.map(k => colorMap[k]);
 
   const x = d3.scaleBand().domain(groups).range([0,w]).padding(0.4);
   const y = d3.scaleLinear().domain([0.8,3.8]).range([h,0]);
