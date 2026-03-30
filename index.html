@@ -552,7 +552,7 @@ function drawT2() {
   const statsDiv = document.getElementById('t2-stats');
   statsDiv.innerHTML = groups.map((grp,i) => {
     const s = T2_SUMMARY[grp];
-    return `<div class="stat-card"><div class="stat-label" style="color:${colors[i]}">${grp}</div><div class="stat-value" style="color:${colors[i]}">${s.median.toFixed(3)}</div><div class="stat-sub">Mediana · n=${s.count} · μ=${s.mean.toFixed(3)}</div></div>`;
+    return `<div class="stat-card"><div class="stat-label" style="color:${colors[i]}">${grp}</div><div class="stat-value" style="color:${colors[i]}">${s.median.toFixed(3)}</div><div class="stat-sub">Mediana n=${s.count}  μ=${s.mean.toFixed(3)}</div></div>`;
   }).join('') + `<div class="stat-card"><div class="stat-label">Diferencia</div><div class="stat-value" style="color:#34d399">-0.128</div><div class="stat-sub">Los medallistas son ligeramente más pacíficos</div></div>`;
 }
 
