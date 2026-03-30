@@ -132,8 +132,8 @@ svg text { font-family:'DM Sans',sans-serif; }
 <div class="tabs" id="tabs">
   <div class="tab active" data-tab="0">Descripción</div>
   <div class="tab" data-tab="1">Objetivo General</div>
-  <div class="tab" data-tab="2"><span class="tag">T1</span>Tendencias · <span class="tag">T2</span>Paz</div>
-  <div class="tab" data-tab="3"><span class="tag">T3</span>GDP · <span class="tag">T4</span>Outliers · <span class="tag">T5</span>Perfiles</div>
+  <div class="tab" data-tab="2"><span class="tag">T1</span>Tendencias  <span class="tag">T2</span>Paz</div>
+  <div class="tab" data-tab="3"><span class="tag">T3</span>GDP <span class="tag">T4</span>Outliers <span class="tag">T5</span>Perfiles</div>
 </div>
 
 <!-- PANEL 0: DESCRIPCIÓN -->
@@ -242,7 +242,7 @@ svg text { font-family:'DM Sans',sans-serif; }
     <div class="legend" id="legend-obj"></div>
   </div>
   <div class="insight-box">
-    <strong>Insight:</strong> Europa Occidental lidera en las tres dimensiones con el perfil más equilibrado del grupo. Norte América sobresale en medallas totales pero su índice de paz es moderado. Oceanía destaca por alta felicidad y alta paz, aunque con volumen de medallas limitado por su número de países. Asia Oriental demuestra que el alto rendimiento deportivo no requiere alta felicidad. El CIS presenta el perfil más desequilibrado con amplias brechas entre sus tres variables.
+    <strong>Insight:</strong> Europa Occidental lidera en las tres dimensiones con el perfil más equilibrado del grupo. Norte América sobresale en medallas totales pero su índice de paz es moderado. Oceanía destaca por alta felicidad y alta paz, aunque con volumen de medallas limitado por su número de países. Asia Oriental demuestra que el alto rendimiento deportivo no requiere alta felicidad. 
   </div>
 </div>
 
@@ -276,8 +276,8 @@ svg text { font-family:'DM Sans',sans-serif; }
     </div>
   </div>
   <div class="insight-box" style="margin-top:1rem">
-    <strong>Insight OE1:</strong> Norteamérica y Oceanía lideran consistentemente en felicidad. América Latina muestra tendencia decreciente durante el periodo.
-    <br><strong>Insight OE2:</strong> Los países medallistas tienen una mediana de paz de 1.893, frente a 2.032 de los no medallistas, lo que sugiere que los países más pacíficos tienden a rendir mejor olímpicamente.
+    <strong>Insight OE1:</strong> Norteamérica y Oceanía lideran consistentemente en felicidad, sin embargo Norteamérica muestra tendencia decreciente durante el periodo mientras que Africa sub-sahariana muestra una tendencia creciente.
+    <br><strong>Insight OE2:</strong> Los países medallistas tienen una mediana de paz de 1.893, frente a 2.032 de los no medallistas, lo que sugiere que los países más pacíficos han rendido ligeramente mejor en este periodo de tiempo.
   </div>
 </div>
 
@@ -553,7 +553,7 @@ function drawT2() {
   statsDiv.innerHTML = groups.map((grp,i) => {
     const s = T2_SUMMARY[grp];
     return `<div class="stat-card"><div class="stat-label" style="color:${colors[i]}">${grp}</div><div class="stat-value" style="color:${colors[i]}">${s.median.toFixed(3)}</div><div class="stat-sub">Mediana · n=${s.count} · μ=${s.mean.toFixed(3)}</div></div>`;
-  }).join('') + `<div class="stat-card"><div class="stat-label">Diferencia</div><div class="stat-value" style="color:#34d399">-0.128</div><div class="stat-sub">Los medallistas son más pacíficos</div></div>`;
+  }).join('') + `<div class="stat-card"><div class="stat-label">Diferencia</div><div class="stat-value" style="color:#34d399">-0.128</div><div class="stat-sub">Los medallistas son ligeramente más pacíficos</div></div>`;
 }
 
 
