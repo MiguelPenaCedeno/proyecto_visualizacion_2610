@@ -136,6 +136,9 @@ svg text { font-family:'DM Sans',sans-serif; }
   <div class="tab" data-tab="3"><span class="tag">T3</span>GDP <span class="tag">T4</span>Outliers <span class="tag">T5</span>Perfiles</div>
 </div>
 
+<!-- CROSS-FILTER BAR -->
+<div id="crossfilter-bar" style="display:none;padding:0.5rem 3rem;background:rgba(56,189,248,0.08);border-bottom:1px solid rgba(56,189,248,0.25);align-items:center;gap:0.8rem;flex-wrap:wrap;"></div>
+
 <!-- PANEL 0: DESCRIPCIÓN -->
 <div class="panel active" id="panel-0">
   <div style="max-width:900px; margin:0 auto; padding: 1rem 0;">
@@ -377,6 +380,55 @@ const _state = {
   p3MinMed: 0
 };
 
+// ===== CROSS-FILTER STATE =====
+const _sel = { region: null, country: null };
+
+// Country → Region lookup (built from OBJ_DATA)
+const _c2r = {};
+OBJ_DATA.forEach(d => { _c2r[d.country] = d.region; });
+
+function _setSel(key, val) {
+  if (_sel[key] === val) {
+    _sel[key] = null;
+    if (key === 'country') _sel.region = null;
+  } else {
+    _sel[key] = val;
+    if (key === 'country') {
+      _sel.region = _c2r[val] || null;
+    }
+    if (key === 'region') {
+      _sel.country = null;
+    }
+  }
+  _updateFilterBar();
+  _redrawActive();
+}
+
+function _clearSel() {
+  _sel.region = null;
+  _sel.country = null;
+  _updateFilterBar();
+  _redrawActive();
+}
+
+function _redrawActive() {
+  const i = +document.querySelector('.tab.active').dataset.tab;
+  _drawFns[i]();
+}
+
+function _updateFilterBar() {
+  const bar = document.getElementById('crossfilter-bar');
+  const parts = [];
+  if (_sel.region)  parts.push(`<span style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);padding:0.15rem 0.5rem;border-radius:4px;font-size:0.78rem;color:var(--accent)">📍 Región: <strong>${_sel.region}</strong></span>`);
+  if (_sel.country) parts.push(`<span style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.4);padding:0.15rem 0.5rem;border-radius:4px;font-size:0.78rem;color:var(--gold)">🔍 País: <strong>${_sel.country}</strong></span>`);
+  if (parts.length) {
+    bar.style.display = 'flex';
+    bar.innerHTML = `<span style="color:var(--text2);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Filtro cruzado activo</span>${parts.join('')}<button onclick="_clearSel()" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--text2);padding:0.2rem 0.7rem;border-radius:4px;cursor:pointer;font-size:0.75rem;transition:all 0.15s" onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">✕ Limpiar</button>`;
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
 function _setActive(group, el) {
   document.querySelectorAll(`[onclick*="${group}"]`).forEach(b => b.classList.remove('active'));
   el.classList.add('active');
@@ -443,29 +495,38 @@ function drawT1() {
   const line = d3.line().x(d=>x(d.Year)).y(d=>y(d.s)).curve(d3.curveMonotoneX);
   regions.forEach((r,i) => {
     const rd = T1_DATA.filter(d=>d.Region===r);
+    const hasSel = _sel.region !== null;
+    const isReg  = _sel.region === r;
     g.append('path').datum(rd).attr('d',line)
-      .attr('fill','none').attr('stroke',COLORS[i]).attr('stroke-width',2.5)
-      .attr('opacity',0.85);
+      .attr('fill','none').attr('stroke',COLORS[i])
+      .attr('stroke-width', hasSel && !isReg ? 1.5 : 2.5)
+      .attr('opacity', hasSel ? (isReg ? 1 : 0.1) : 0.85)
+      .attr('cursor','pointer')
+      .on('click', () => _setSel('region', r));
     // Dots
     g.selectAll('.dot-'+i).data(rd).join('circle')
       .attr('cx',d=>x(d.Year)).attr('cy',d=>y(d.s)).attr('r',4)
       .attr('fill',COLORS[i]).attr('stroke',COLORS[i]).attr('stroke-width',1)
-      .attr('opacity',0.9).attr('cursor','pointer')
+      .attr('opacity', hasSel ? (isReg ? 1 : 0.1) : 0.9).attr('cursor','pointer')
       .on('mouseover', function(ev,d) {
         d3.select(this).attr('r',7);
         const tip = document.getElementById('tip-t1');
         tip.style.display='block';
-        tip.innerHTML=`<div class="tt-title">${d.Region}</div><div class="tt-row">Año: <span class="tt-val">${d.Year}</span></div><div class="tt-row">Score: <span class="tt-val">${d.s.toFixed(3)}</span></div>`;
+        tip.innerHTML=`<div class="tt-title">${d.Region}</div><div class="tt-row">Año: <span class="tt-val">${d.Year}</span></div><div class="tt-row">Score: <span class="tt-val">${d.s.toFixed(3)}</span></div><div class="tt-row" style="color:var(--accent);margin-top:0.3rem;font-size:0.7rem">Clic para filtrar región</div>`;
         tip.style.left=(ev.offsetX+15)+'px'; tip.style.top=(ev.offsetY-40)+'px';
       })
       .on('mouseout', function() {
         d3.select(this).attr('r',4);
         document.getElementById('tip-t1').style.display='none';
-      });
+      })
+      .on('click', (ev,d) => { ev.stopPropagation(); _setSel('region', d.Region); });
     // Label at end
     const last = rd[rd.length-1];
     g.append('text').attr('x',x(last.Year)+8).attr('y',y(last.s)+4)
-      .text(r).attr('fill',COLORS[i]).attr('font-size','10px').attr('font-weight',500);
+      .text(r).attr('fill',COLORS[i]).attr('font-size','10px').attr('font-weight',500)
+      .attr('opacity', hasSel ? (isReg ? 1 : 0.1) : 1)
+      .attr('cursor','pointer')
+      .on('click', () => _setSel('region', r));
   });
 
   g.append('text').attr('x',w/2).attr('y',-10).attr('text-anchor','middle')
@@ -548,6 +609,25 @@ function drawT2() {
 
   g.append('text').attr('x',w/2).attr('y',h+45).attr('text-anchor','middle')
     .attr('fill','#94a3b8').attr('font-size','11px').text('Overall Peace Score (menor = más pacífico)');
+
+  // Cross-filter overlay: show selected country's peace score as a marker
+  if (_sel.country) {
+    const countryPeace = T4_DATA.find(d => d.c === _sel.country);
+    if (countryPeace) {
+      const hasMedals = T3_DATA.some(d => d.c === _sel.country);
+      const grpKey = hasMedals ? 'Con medallas' : 'Sin medallas';
+      if (groups.includes(grpKey)) {
+        const markerX = x(grpKey) + x.bandwidth()/2;
+        g.append('line').attr('x1', markerX - x.bandwidth()*0.4).attr('x2', markerX + x.bandwidth()*0.4)
+          .attr('y1', y(countryPeace.p)).attr('y2', y(countryPeace.p))
+          .attr('stroke','#fbbf24').attr('stroke-width', 2.5).attr('stroke-dasharray','4,3');
+        g.append('circle').attr('cx', markerX).attr('cy', y(countryPeace.p)).attr('r', 7)
+          .attr('fill','#fbbf24').attr('stroke','#fff').attr('stroke-width',2).attr('opacity',0.95);
+        g.append('text').attr('x', markerX + x.bandwidth()*0.45 + 6).attr('y', y(countryPeace.p) + 4)
+          .text(_sel.country).attr('fill','#fbbf24').attr('font-size','9px').attr('font-weight',700);
+      }
+    }
+  }
 
   // Stats cards
   const statsDiv = document.getElementById('t2-stats');
@@ -632,28 +712,47 @@ function drawT3() {
   g.selectAll('.stem').data(data).join('line')
     .attr('x1',d=>x(d.c)+x.bandwidth()/2).attr('x2',d=>x(d.c)+x.bandwidth()/2)
     .attr('y1',h).attr('y2',d=>y(d.m))
-    .attr('stroke',d=>colorScale(d.h)).attr('stroke-width',1.5).attr('opacity',0.7);
+    .attr('stroke',d=>colorScale(d.h)).attr('stroke-width',1.5)
+    .attr('opacity', d => {
+      if (_sel.country) return d.c === _sel.country ? 0.9 : 0.12;
+      if (_sel.region)  return _c2r[d.c] === _sel.region ? 0.9 : 0.12;
+      return 0.7;
+    });
 
   // Lollipop heads
   g.selectAll('.head').data(data).join('circle')
     .attr('cx',d=>x(d.c)+x.bandwidth()/2).attr('cy',d=>y(d.m))
-    .attr('r', d => d.m > 30 ? 7 : d.m > 10 ? 5 : 4)
+    .attr('r', d => { const base = d.m > 30 ? 7 : d.m > 10 ? 5 : 4; return _sel.country === d.c ? base + 3 : base; })
     .attr('fill',d=>colorScale(d.h))
-    .attr('stroke',d=>colorScale(d.h)).attr('stroke-width',1.5)
-    .attr('opacity',0.85).attr('cursor','pointer')
+    .attr('stroke', d => _sel.country === d.c ? '#fff' : colorScale(d.h))
+    .attr('stroke-width', d => _sel.country === d.c ? 2.5 : 1.5)
+    .attr('opacity', d => {
+      if (_sel.country) return d.c === _sel.country ? 1 : 0.15;
+      if (_sel.region)  return _c2r[d.c] === _sel.region ? 0.9 : 0.15;
+      return 0.85;
+    })
+    .attr('cursor','pointer')
     .on('mouseover', function(ev,d) {
-      d3.select(this).attr('r',10).attr('opacity',1);
+      const base = d.m>30?7:d.m>10?5:4;
+      d3.select(this).attr('r', base + (_sel.country===d.c ? 3 : 0) + 3).attr('opacity',1);
       const tip = document.getElementById('tip-t3');
       tip.style.display='block';
       tip.innerHTML=`<div class="tt-title">${d.c}</div>
         <div class="tt-row">Medallas: <span class="tt-val">${d.m}</span></div>
         <div class="tt-row">GDP per Cápita: <span class="tt-val">${d.g.toFixed(3)}</span></div>
-        <div class="tt-row">Happiness: <span class="tt-val">${d.h.toFixed(3)}</span></div>`;
+        <div class="tt-row">Happiness: <span class="tt-val">${d.h.toFixed(3)}</span></div>
+        <div class="tt-row" style="color:var(--accent);margin-top:0.3rem;font-size:0.7rem">Clic para filtrar país</div>`;
       tip.style.left=(ev.offsetX+15)+'px'; tip.style.top=(ev.offsetY-60)+'px';
     })
     .on('mouseout', function(ev,d) {
-      d3.select(this).attr('r', d.m>30?7:d.m>10?5:4).attr('opacity',0.85);
+      const base = d.m>30?7:d.m>10?5:4;
+      d3.select(this).attr('r', _sel.country===d.c ? base+3 : base)
+        .attr('opacity', _sel.country ? (d.c===_sel.country ? 1 : 0.15) : (_sel.region ? (_c2r[d.c]===_sel.region ? 0.9 : 0.15) : 0.85));
       document.getElementById('tip-t3').style.display='none';
+    })
+    .on('click', function(ev,d) {
+      document.getElementById('tip-t3').style.display='none';
+      _setSel('country', d.c);
     });
 
   // 2-3 labels per GDP quartile, pick top medal-getters per quartile
@@ -762,20 +861,33 @@ function drawT4() {
   OBJ_DATA.forEach(d => { t4country2region[d.country] = d.region; });
 
   g.selectAll('.dot').data(T4_DATA).join('circle')
-    .attr('cx',d=>x(d.p)).attr('cy',d=>y(d.h)).attr('r',5.5)
+    .attr('cx',d=>x(d.p)).attr('cy',d=>y(d.h))
+    .attr('r', d => _sel.country === d.c ? 9 : 5.5)
     .attr('fill',d=>getQuadColor(d))
-    .attr('fill-opacity', d => rgT4==='all' ? 0.7 : (t4country2region[d.c]===rgT4 ? 0.95 : 0.1))
-    .attr('stroke',d=>getQuadColor(d)).attr('stroke-width',1).attr('cursor','pointer')
+    .attr('fill-opacity', d => {
+      if (_sel.country) return d.c === _sel.country ? 1 : 0.1;
+      if (_sel.region)  return t4country2region[d.c] === _sel.region ? 0.95 : 0.1;
+      if (rgT4 !== 'all') return t4country2region[d.c] === rgT4 ? 0.95 : 0.1;
+      return 0.7;
+    })
+    .attr('stroke', d => _sel.country === d.c ? '#fff' : getQuadColor(d))
+    .attr('stroke-width', d => _sel.country === d.c ? 2 : 1)
+    .attr('cursor','pointer')
     .on('mouseover', function(ev,d) {
-      d3.select(this).attr('r',9).attr('fill-opacity',1);
+      d3.select(this).attr('r', _sel.country===d.c ? 11 : 9).attr('fill-opacity',1);
       const tip = document.getElementById('tip-t4');
       tip.style.display='block';
-      tip.innerHTML=`<div class="tt-title">${d.c}</div><div class="tt-row">Felicidad: <span class="tt-val">${d.h.toFixed(3)}</span></div><div class="tt-row">Paz (Overall): <span class="tt-val">${d.p.toFixed(3)}</span></div>`;
+      tip.innerHTML=`<div class="tt-title">${d.c}</div><div class="tt-row">Felicidad: <span class="tt-val">${d.h.toFixed(3)}</span></div><div class="tt-row">Paz (Overall): <span class="tt-val">${d.p.toFixed(3)}</span></div><div class="tt-row" style="color:var(--accent);margin-top:0.3rem;font-size:0.7rem">Clic para filtrar país</div>`;
       tip.style.left=(ev.offsetX+15)+'px'; tip.style.top=(ev.offsetY-50)+'px';
     })
-    .on('mouseout', function() {
-      d3.select(this).attr('r',5.5).attr('fill-opacity',0.7);
+    .on('mouseout', function(ev,d) {
+      d3.select(this).attr('r', _sel.country===d.c ? 9 : 5.5)
+        .attr('fill-opacity', _sel.country ? (d.c===_sel.country ? 1 : 0.1) : (_sel.region ? (t4country2region[d.c]===_sel.region ? 0.95 : 0.1) : (rgT4!=='all' ? (t4country2region[d.c]===rgT4 ? 0.95 : 0.1) : 0.7)));
       document.getElementById('tip-t4').style.display='none';
+    })
+    .on('click', function(ev,d) {
+      document.getElementById('tip-t4').style.display='none';
+      _setSel('country', d.c);
     });
 
   // Label outliers
@@ -855,6 +967,11 @@ function drawT5() {
   // Default: show Canada, Norway, Russia, China
   const defaultShow = ['Canada','Norway','Russia','China'];
   const selected = new Set(defaultShow);
+
+  // Cross-filter: if a country is selected globally and it's in the top-10, auto-add it
+  if (_sel.country && T5_DATA.some(d => d.country === _sel.country)) {
+    selected.add(_sel.country);
+  }
 
   function drawRadars() {
     g.selectAll('.radar-path,.radar-dot').remove();
@@ -977,12 +1094,24 @@ function drawObj() {
     const cy   = y(d.region) + y.bandwidth()/2;
     const minX = x(d3.min(vals));
     const maxX = x(d3.max(vals));
+    const hasSelR = _sel.region !== null;
+    const isSelR  = _sel.region === d.region;
+    const rowOp   = hasSelR ? (isSelR ? 1 : 0.15) : 1;
+
+    // Invisible click area spanning the full row
+    g.append('rect')
+      .attr('x', -170).attr('y', cy - y.bandwidth()/2 - 4)
+      .attr('width', w + 185).attr('height', y.bandwidth() + 8)
+      .attr('fill', isSelR ? 'rgba(56,189,248,0.07)' : 'transparent')
+      .attr('rx', 4).attr('cursor','pointer')
+      .on('click', () => _setSel('region', d.region));
 
     // Connecting line between min and max dot
     g.append('line')
       .attr('x1', minX).attr('x2', maxX)
       .attr('y1', cy).attr('y2', cy)
-      .attr('stroke','#334155').attr('stroke-width', 1.5);
+      .attr('stroke','#334155').attr('stroke-width', 1.5)
+      .attr('opacity', rowOp);
 
     // 3 dots
     vars.forEach((v, i) => {
@@ -992,7 +1121,7 @@ function drawObj() {
       g.append('circle')
         .attr('cx', x(vn)).attr('cy', cy).attr('r', isHL ? 7 : 4)
         .attr('fill', colors[i])
-        .attr('opacity', isHL ? 1 : 0.25)
+        .attr('opacity', isHL ? rowOp : rowOp * 0.25)
         .attr('stroke', '#0a0e17').attr('stroke-width', 1.5)
         .attr('cursor','pointer')
         .on('mouseover', function(ev) {
@@ -1004,21 +1133,26 @@ function drawObj() {
                        :                   d.medals+' medallas';
           tip.innerHTML = `<div class="tt-title">${d.region}</div>
             <div class="tt-row">${labels[i]}: <span class="tt-val">${rawVal}</span></div>
-            <div class="tt-row">Posición relativa: <span class="tt-val">${(vn*100).toFixed(0)}%</span></div>`;
+            <div class="tt-row">Posición relativa: <span class="tt-val">${(vn*100).toFixed(0)}%</span></div>
+            <div class="tt-row" style="color:var(--accent);margin-top:0.3rem;font-size:0.7rem">Clic para filtrar región</div>`;
           tip.style.left=(ev.offsetX+14)+'px'; tip.style.top=(ev.offsetY-55)+'px';
         })
         .on('mouseout', function() {
-          d3.select(this).attr('r', 7);
+          d3.select(this).attr('r', isHL ? 7 : 4);
           document.getElementById('tip-obj').style.display='none';
-        });
+        })
+        .on('click', () => _setSel('region', d.region));
     });
 
     // Region label
     g.append('text')
       .attr('x',-10).attr('y', cy+4)
       .text(shortName(d.region))
-      .attr('text-anchor','end').attr('fill','#cbd5e1')
-      .attr('font-size','11px');
+      .attr('text-anchor','end')
+      .attr('fill', isSelR ? 'var(--accent)' : '#cbd5e1')
+      .attr('font-size','11px').attr('font-weight', isSelR ? 700 : 400)
+      .attr('opacity', rowOp).attr('cursor','pointer')
+      .on('click', () => _setSel('region', d.region));
   });
 
   // X axis
