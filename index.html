@@ -777,7 +777,7 @@ function drawT3() {
   const happyExtent = d3.extent(data, d=>d.h);
   const colorScale = d3.scaleSequential()
     .domain(happyExtent)
-    .interpolator(d3.interpolateRdYlGn);
+    .interpolator(d3.interpolateRgb('#78350f', '#fef08a'));
 
   // GDP quartile bands background
   const gdpVals = data.map(d=>d.g);
@@ -896,9 +896,8 @@ function drawT3() {
   // Color legend
   const defs = svg.append('defs');
   const grad = defs.append('linearGradient').attr('id','happyGrad');
-  grad.append('stop').attr('offset','0%').attr('stop-color','#ef4444');
-  grad.append('stop').attr('offset','50%').attr('stop-color','#fbbf24');
-  grad.append('stop').attr('offset','100%').attr('stop-color','#34d399');
+  grad.append('stop').attr('offset','0%').attr('stop-color','#78350f');
+  grad.append('stop').attr('offset','100%').attr('stop-color','#fef08a');
 
   const legX = W - 280, legY = H - 45;
   svg.append('text').attr('x',legX).attr('y',legY).attr('fill',TC.label2).attr('font-size','12px').attr('font-weight',600).text('Happiness Score');
