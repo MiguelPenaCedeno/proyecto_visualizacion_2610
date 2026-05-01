@@ -132,8 +132,11 @@ svg text { font-family:'DM Sans',sans-serif; }
 <div class="tabs" id="tabs">
   <div class="tab active" data-tab="0">Descripción</div>
   <div class="tab" data-tab="1">Objetivo General</div>
-  <div class="tab" data-tab="2"><span class="tag">T1</span>Tendencias  <span class="tag">T2</span>Paz</div>
-  <div class="tab" data-tab="3"><span class="tag">T3</span>GDP <span class="tag">T4</span>Outliers <span class="tag">T5</span>Perfiles</div>
+  <div class="tab" data-tab="2"><span class="tag">T1</span>Tendencias</div>
+  <div class="tab" data-tab="3"><span class="tag">T2</span>Paz</div>
+  <div class="tab" data-tab="4"><span class="tag">T3</span>GDP</div>
+  <div class="tab" data-tab="5"><span class="tag">T4</span>Outliers</div>
+  <div class="tab" data-tab="6"><span class="tag">T5</span>Perfiles</div>
 </div>
 
 <!-- CROSS-FILTER BAR -->
@@ -249,113 +252,120 @@ svg text { font-family:'DM Sans',sans-serif; }
   </div>
 </div>
 
-<!-- PANEL 2: T1 + T2 -->
+<!-- PANEL 2: T1 -->
 <div class="panel" id="panel-2">
   <div class="panel-header">
-    <h2>OE1 y OE2: Tendencias de Felicidad y Distribución de Paz</h2>
-    <p>Izquierda: evolución del nivel de felicidad promedio por región geográfica entre 2015 y 2019. Derecha: distribución del puntaje general de paz comparando países que obtuvieron medallas olímpicas y los que no.</p>
+    <h2>OE1: Tendencias de Felicidad por Región</h2>
+    <p>Evolución del nivel de felicidad promedio por región geográfica entre 2015 y 2019. Haz clic en una línea o punto para filtrar el dashboard por esa región.</p>
   </div>
-
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem">
-    <div>
-      <div class="chart-container">
-        <svg id="chart-t1" width="100%" height="380"></svg>
-        <div class="tooltip" id="tip-t1"></div>
-        <div class="legend" id="legend-t1"></div>
-      </div>
-    </div>
-    <div>
-      <div class="filters" style="margin-bottom:0.6rem">
-        <span class="filter-label">Comparar grupos</span>
-        <button class="filter-btn active" data-grp="both" onclick="p2Group('both',this)">Ambos grupos</button>
-        <button class="filter-btn" data-grp="medals" onclick="p2Group('medals',this)">Solo medallistas</button>
-        <button class="filter-btn" data-grp="nomedals" onclick="p2Group('nomedals',this)">Solo no medallistas</button>
-      </div>
-      <div class="stats-row" id="t2-stats"></div>
-      <div class="chart-container">
-        <svg id="chart-t2" width="100%" height="380"></svg>
-        <div class="tooltip" id="tip-t2"></div>
-      </div>
-    </div>
+  <div class="chart-container">
+    <svg id="chart-t1" width="100%" height="480"></svg>
+    <div class="tooltip" id="tip-t1"></div>
+    <div class="legend" id="legend-t1"></div>
   </div>
   <div class="insight-box" style="margin-top:1rem">
     <strong>Insight OE1:</strong> Norteamérica y Oceanía lideran consistentemente en felicidad, sin embargo Norteamérica muestra tendencia decreciente durante el periodo mientras que Africa sub-sahariana muestra una tendencia creciente.
-    <br><strong>Insight OE2:</strong> Los países medallistas tienen una mediana de paz de 1.893, frente a 2.032 de los no medallistas, lo que sugiere que los países más pacíficos han rendido ligeramente mejor en este periodo de tiempo.
   </div>
 </div>
 
-<!-- PANEL 3: T3 + T4 + T5 -->
+<!-- PANEL 3: T2 -->
 <div class="panel" id="panel-3">
   <div class="panel-header">
-    <h2>OE3, OE4 y OE5: GDP, Outliers y Perfiles Multidimensionales</h2>
+    <h2>OE2: Distribución de Paz — Medallistas vs No Medallistas</h2>
+    <p>Distribución del puntaje general de paz comparando países que obtuvieron medallas olímpicas y los que no. Un valor más bajo indica mayor paz.</p>
   </div>
-
-  <div style="margin-bottom:2rem">
-    <h3 style="font-size:1.25rem; color:var(--accent2); margin-bottom:0.6rem">OE3: GDP per Cápita vs Medallas Olímpicas</h3>
-    <p style="color:var(--text2); font-size:0.95rem; margin-bottom:0.8rem; line-height:1.6">Países ordenados por GDP per cápita. La altura del lollipop representa el total de medallas y el color refleja el Happiness Score.</p>
-    <div class="filters" style="margin-bottom:0.6rem">
-      <span class="filter-label">Cuartil GDP</span>
-      <select class="filter-select" id="p3-gdp" onchange="drawT3()">
-        <option value="all">Todos</option>
-        <option value="0">GDP Bajo</option>
-        <option value="1">GDP Medio-Bajo</option>
-        <option value="2">GDP Medio-Alto</option>
-        <option value="3">GDP Alto</option>
-      </select>
-      <span class="filter-label" style="margin-left:1rem">Medallas mínimas</span>
-      <button class="filter-btn active" data-min="0"  onclick="p3MinMed(0,this)">Todos</button>
-      <button class="filter-btn" data-min="5"  onclick="p3MinMed(5,this)">5+</button>
-      <button class="filter-btn" data-min="10" onclick="p3MinMed(10,this)">10+</button>
-      <button class="filter-btn" data-min="30" onclick="p3MinMed(30,this)">30+</button>
-    </div>
-    <div class="chart-container">
-      <svg id="chart-t3" width="100%" height="500"></svg>
-      <div class="tooltip" id="tip-t3"></div>
-    </div>
+  <div class="filters">
+    <span class="filter-label">Comparar grupos</span>
+    <button class="filter-btn active" data-grp="both" onclick="p2Group('both',this)">Ambos grupos</button>
+    <button class="filter-btn" data-grp="medals" onclick="p2Group('medals',this)">Solo medallistas</button>
+    <button class="filter-btn" data-grp="nomedals" onclick="p2Group('nomedals',this)">Solo no medallistas</button>
   </div>
-
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem">
-    <div>
-      <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:0.5rem">OE4: Países Atípicos, Felicidad vs Paz</h3>
-      <p style="color:var(--text2); font-size:0.83rem; margin-bottom:0.8rem">Cuadrantes divididos por las medianas. Superior izquierdo: alta felicidad y alta paz.</p>
-      <div class="filters" style="margin-bottom:0.6rem">
-        <span class="filter-label">Filtrar por región</span>
-        <select class="filter-select" id="p3-region" onchange="drawT4()">
-          <option value="all">Todas las regiones</option>
-          <option>Western Europe</option>
-          <option>North America</option>
-          <option>Latin America</option>
-          <option>Eastern Asia</option>
-          <option>CIS</option>
-          <option>Middle East/N. Africa</option>
-          <option>Sub-Saharan Africa</option>
-          <option>Southeast Asia</option>
-          <option>Southern Asia</option>
-          <option>Oceania</option>
-          <option>Central/Eastern Europe</option>
-        </select>
-      </div>
-      <div class="chart-container">
-        <svg id="chart-t4" width="100%" height="420"></svg>
-        <div class="tooltip" id="tip-t4"></div>
-      </div>
-    </div>
-    <div>
-      <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:0.5rem">OE5: Perfil Multidimensional Top 10</h3>
-      <p style="color:var(--text2); font-size:0.83rem; margin-bottom:0.8rem">Compara cualquier país de la base de datos en 5 dimensiones. Busca y agrega países para comparar sus perfiles.</p>
-      <div class="filters" id="t5-filters"></div>
-      <div class="chart-container">
-        <svg id="chart-t5" width="100%" height="420"></svg>
-        <div class="tooltip" id="tip-t5"></div>
-        <div class="legend" id="legend-t5"></div>
-      </div>
-    </div>
+  <div class="stats-row" id="t2-stats"></div>
+  <div class="chart-container">
+    <svg id="chart-t2" width="100%" height="480"></svg>
+    <div class="tooltip" id="tip-t2"></div>
   </div>
+  <div class="insight-box" style="margin-top:1rem">
+    <strong>Insight OE2:</strong> Los países medallistas tienen una mediana de paz de 1.893, frente a 2.032 de los no medallistas, lo que sugiere que los países más pacíficos han rendido ligeramente mejor en este periodo de tiempo.
+  </div>
+</div>
 
-  <div class="insight-box">
-    <strong>Insight OE3:</strong> Los países de mayor GDP concentran más medallas, aunque Kenya y Etiopía son excepciones notables.
-    <br><strong>Insight OE4:</strong> Israel y Colombia son felices a pesar de sus altos índices de conflicto. Japón y Singapur son muy pacíficos pero reportan felicidad moderada.
-    <br><strong>Insight OE5:</strong> Noruega y Canadá son los perfiles más equilibrados del top 10.
+<!-- PANEL 4: T3 -->
+<div class="panel" id="panel-4">
+  <div class="panel-header">
+    <h2>OE3: GDP per Cápita vs Medallas Olímpicas</h2>
+    <p>Países ordenados por GDP per cápita de menor a mayor. La altura del lollipop representa el total de medallas y el color refleja el Happiness Score. Haz clic en un país para filtrar el dashboard.</p>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Cuartil GDP</span>
+    <select class="filter-select" id="p3-gdp" onchange="drawT3()">
+      <option value="all">Todos</option>
+      <option value="0">GDP Bajo</option>
+      <option value="1">GDP Medio-Bajo</option>
+      <option value="2">GDP Medio-Alto</option>
+      <option value="3">GDP Alto</option>
+    </select>
+    <span class="filter-label" style="margin-left:1rem">Medallas mínimas</span>
+    <button class="filter-btn active" data-min="0"  onclick="p3MinMed(0,this)">Todos</button>
+    <button class="filter-btn" data-min="5"  onclick="p3MinMed(5,this)">5+</button>
+    <button class="filter-btn" data-min="10" onclick="p3MinMed(10,this)">10+</button>
+    <button class="filter-btn" data-min="30" onclick="p3MinMed(30,this)">30+</button>
+  </div>
+  <div class="chart-container">
+    <svg id="chart-t3" width="100%" height="540"></svg>
+    <div class="tooltip" id="tip-t3"></div>
+  </div>
+  <div class="insight-box" style="margin-top:1rem">
+    <strong>Insight OE3:</strong> Los países de mayor GDP concentran más medallas, aunque Kenya y Etiopía son excepciones notables con alto rendimiento deportivo relativo a su nivel económico.
+  </div>
+</div>
+
+<!-- PANEL 5: T4 -->
+<div class="panel" id="panel-5">
+  <div class="panel-header">
+    <h2>OE4: Países Atípicos — Felicidad vs Paz</h2>
+    <p>Cuadrantes divididos por las medianas globales. Superior izquierdo: alta felicidad y alta paz. Haz clic en un país para filtrar el dashboard.</p>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Filtrar por región</span>
+    <select class="filter-select" id="p3-region" onchange="drawT4()">
+      <option value="all">Todas las regiones</option>
+      <option>Western Europe</option>
+      <option>North America</option>
+      <option>Latin America</option>
+      <option>Eastern Asia</option>
+      <option>CIS</option>
+      <option>Middle East/N. Africa</option>
+      <option>Sub-Saharan Africa</option>
+      <option>Southeast Asia</option>
+      <option>Southern Asia</option>
+      <option>Oceania</option>
+      <option>Central/Eastern Europe</option>
+    </select>
+  </div>
+  <div class="chart-container">
+    <svg id="chart-t4" width="100%" height="560"></svg>
+    <div class="tooltip" id="tip-t4"></div>
+  </div>
+  <div class="insight-box" style="margin-top:1rem">
+    <strong>Insight OE4:</strong> Israel y Colombia son felices a pesar de sus altos índices de conflicto. Japón y Singapur son muy pacíficos pero reportan felicidad moderada.
+  </div>
+</div>
+
+<!-- PANEL 6: T5 -->
+<div class="panel" id="panel-6">
+  <div class="panel-header">
+    <h2>OE5: Perfil Multidimensional por País</h2>
+    <p>Compara cualquier país de la base de datos en 5 dimensiones: medallas, felicidad, GDP, libertad y paz. Busca y agrega países para comparar sus perfiles.</p>
+  </div>
+  <div class="filters" id="t5-filters"></div>
+  <div class="chart-container" style="margin-top:0.8rem">
+    <svg id="chart-t5" width="100%" height="540"></svg>
+    <div class="tooltip" id="tip-t5"></div>
+    <div class="legend" id="legend-t5"></div>
+  </div>
+  <div class="insight-box" style="margin-top:1rem">
+    <strong>Insight OE5:</strong> Noruega y Canadá son los perfiles más equilibrados del top 10 en las cinco dimensiones analizadas.
   </div>
 </div>
 
@@ -458,10 +468,10 @@ function objSort(key, el)       { _state.objSort = key;    _setActive('objSort',
 function objHighlight(key, el)  { _state.objHL   = key;    _setActive('objHighlight', el); drawObj(); }
 function p2Year(yr, el)         { _state.p2Year  = yr;     _setActive('p2Year', el);     drawPanel2(); }
 function p2Group(g, el)         { _state.p2Group = g;      _setActive('p2Group', el);    drawT2(); }
-function p3MinMed(n, el)        { _state.p3MinMed = n;     _setActive('p3MinMed', el);   drawPanel3(); }
+function p3MinMed(n, el)        { _state.p3MinMed = n;     _setActive('p3MinMed', el);   drawT3(); }
 
 // ===== TAB NAVIGATION =====
-const _drawFns = [drawDesc, drawObj, drawPanel2, drawPanel3, drawPanel3];
+const _drawFns = [drawDesc, drawObj, drawT1, drawT2, drawT3, drawT4, drawT5];
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
