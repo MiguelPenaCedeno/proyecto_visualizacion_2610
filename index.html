@@ -34,27 +34,32 @@
 }
 
 body.light {
-  --bg: #f0f4f8;
+  --bg: #f1f5f9;
   --surface: #ffffff;
-  --surface2: #f1f5f9;
-  --border: #e2e8f0;
+  --surface2: #f8fafc;
+  --border: #94a3b8;      /* strong enough to see card outlines */
   --text: #0f172a;
-  --text2: #64748b;
-  --accent: #0284c7;
-  --accent2: #4f46e5;
-  --accent3: #db2777;
-  --accent4: #059669;
-  --accent5: #ea580c;
-  --danger: #dc2626;
-  --gold: #b45309;
-  --cg: #e8edf5;
-  --ca: #d1d5db;
-  --cd: #9ca3af;
-  --ct: #64748b;
-  --cl: #334155;
-  --cl2: #1e293b;
-  --cc: #e2e8f0;
-  --cb: #f8fafc;
+  --text2: #334155;       /* darker secondary text */
+  --accent: #0369a1;
+  --accent2: #4338ca;
+  --accent3: #be185d;
+  --accent4: #047857;
+  --accent5: #c2410c;
+  --danger: #b91c1c;
+  --gold: #92400e;
+  --cg: #d1d9e6;          /* grid lines — visible but subtle */
+  --ca: #64748b;          /* axis lines — clearly visible */
+  --cd: #475569;          /* quadrant dividers */
+  --ct: #334155;          /* chart axis/tick text */
+  --cl: #1e293b;          /* chart labels */
+  --cl2: #0f172a;         /* bright chart labels */
+  --cc: #64748b;          /* connector lines — visible */
+  --cb: #f8fafc;          /* dot background */
+}
+/* cross-filter bar accent in light mode */
+body.light #crossfilter-bar {
+  background: rgba(3,105,161,0.07) !important;
+  border-bottom-color: rgba(3,105,161,0.2) !important;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
