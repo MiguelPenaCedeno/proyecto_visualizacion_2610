@@ -310,6 +310,7 @@ svg text { font-family:'DM Sans',sans-serif; }
     <h2>OE1: Tendencias de Felicidad por Región</h2>
     <p>Evolución del nivel de felicidad promedio por región geográfica entre 2015 y 2019. Haz clic en una línea o punto para filtrar el dashboard por esa región.</p>
   </div>
+  <div id="t1-filters" class="filters" style="gap:0.5rem"></div>
   <div class="chart-container">
     <svg id="chart-t1" width="100%" height="480"></svg>
     <div class="tooltip" id="tip-t1"></div>
@@ -476,6 +477,9 @@ const ALL_COUNTRY_DATA = (() => {
 // Persistent selection state for T5 radar (survives redraws)
 const _t5selected = new Set(['Canada', 'Norway', 'Russia', 'China']);
 
+// Persistent region visibility state for T1 line chart (survives redraws)
+const _t1selected = new Set(['CIS','Central/Eastern Europe','Eastern Asia','Latin America','Middle East/N. Africa','North America','Oceania','Southeast Asia','Southern Asia','Sub-Saharan Africa','Western Europe']);
+
 
 // ===== FILTER STATE =====
 const _state = {
@@ -571,6 +575,25 @@ function drawDesc() {}
 
 // ===== T1: LINE CHART =====
 function drawT1() {
+  const allRegions = [...new Set(T1_DATA.map(d=>d.Region))];
+
+  // Region toggle globals
+  window._t1Toggle = r => { if(_t1selected.has(r)) _t1selected.delete(r); else _t1selected.add(r); drawT1(); };
+  window._t1All    = () => { allRegions.forEach(r=>_t1selected.add(r)); drawT1(); };
+  window._t1None   = () => { _t1selected.clear(); drawT1(); };
+
+  // Build filter chips
+  const fb = document.getElementById('t1-filters');
+  const allOn = _t1selected.size === allRegions.length;
+  fb.innerHTML =
+    `<button class="filter-btn${allOn?' active':''}" onclick="window._t1All()" style="font-size:0.75rem;padding:0.25rem 0.6rem">Todas</button>` +
+    `<button class="filter-btn" onclick="window._t1None()" style="font-size:0.75rem;padding:0.25rem 0.6rem">Ninguna</button>` +
+    allRegions.map((r,i) => {
+      const on = _t1selected.has(r);
+      const c  = COLORS[i];
+      return `<button class="filter-btn" style="font-size:0.72rem;padding:0.22rem 0.55rem;border-color:${c};color:${on?TC.dotbg:c};background:${on?c:'transparent'}" onclick="window._t1Toggle('${r.replace(/'/g,"\\'")}')"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${c};margin-right:4px;vertical-align:middle;opacity:${on?1:0.6}"></span>${r}</button>`;
+    }).join('');
+
   const svg = d3.select('#chart-t1');
   svg.selectAll('*').remove();
   const W = getW('chart-t1'), H = 420;
@@ -578,7 +601,6 @@ function drawT1() {
   const w = W-m.l-m.r, h = H-m.t-m.b;
   svg.attr('viewBox',`0 0 ${W} ${H}`);
 
-  const regions = [...new Set(T1_DATA.map(d=>d.Region))];
   const g = svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
 
   const x = d3.scaleLinear().domain([2015,2019]).range([0,w]);
@@ -597,9 +619,10 @@ function drawT1() {
   g.selectAll('.domain').attr('stroke',TC.axis);
   g.selectAll('.tick line').attr('stroke',TC.axis);
 
-  // Lines
+  // Lines — only render selected regions, preserve original color index
   const line = d3.line().x(d=>x(d.Year)).y(d=>y(d.s)).curve(d3.curveMonotoneX);
-  regions.forEach((r,i) => {
+  allRegions.forEach((r,i) => {
+    if (!_t1selected.has(r)) return;
     const rd = T1_DATA.filter(d=>d.Region===r);
     const hasSel = _sel.region !== null;
     const isReg  = _sel.region === r;
@@ -609,7 +632,6 @@ function drawT1() {
       .attr('opacity', hasSel ? (isReg ? 1 : 0.1) : 0.85)
       .attr('cursor','pointer')
       .on('click', () => _setSel('region', r));
-    // Dots
     g.selectAll('.dot-'+i).data(rd).join('circle')
       .attr('cx',d=>x(d.Year)).attr('cy',d=>y(d.s)).attr('r',4)
       .attr('fill',COLORS[i]).attr('stroke',COLORS[i]).attr('stroke-width',1)
@@ -626,7 +648,6 @@ function drawT1() {
         document.getElementById('tip-t1').style.display='none';
       })
       .on('click', (ev,d) => { ev.stopPropagation(); _setSel('region', d.Region); });
-    // Label at end
     const last = rd[rd.length-1];
     g.append('text').attr('x',x(last.Year)+8).attr('y',y(last.s)+4)
       .text(r).attr('fill',COLORS[i]).attr('font-size','10px').attr('font-weight',500)
