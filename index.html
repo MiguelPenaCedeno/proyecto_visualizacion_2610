@@ -995,11 +995,6 @@ function drawT4() {
       _setSel('country', d.c);
     });
 
-  // Label outliers
-  const outliers = T4_DATA.filter(d=>(d.h>6.5&&d.p>2.3)||(d.h>7.3)||(d.p>3)||(d.h<3.5)||(d.c==='Israel')||(d.c==='Colombia')||(d.c==='Somalia'));
-  g.selectAll('.olbl').data(outliers).join('text')
-    .attr('x',d=>x(d.p)+7).attr('y',d=>y(d.h)+3)
-    .text(d=>d.c).attr('fill',TC.label).attr('font-size','8.5px');
 
   g.append('text').attr('x',w/2).attr('y',h+40).attr('text-anchor','middle')
     .attr('fill',TC.text2).attr('font-size','11px').text('Overall Peace Score');
