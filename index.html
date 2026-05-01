@@ -22,6 +22,39 @@
   --accent5: #fb923c;
   --danger: #ef4444;
   --gold: #fbbf24;
+  /* chart-specific colors referenced by JS */
+  --cg: #1e293b;
+  --ca: #2a3548;
+  --cd: #475569;
+  --ct: #94a3b8;
+  --cl: #cbd5e1;
+  --cl2: #e2e8f0;
+  --cc: #334155;
+  --cb: #0a0e17;
+}
+
+body.light {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface2: #f1f5f9;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text2: #64748b;
+  --accent: #0284c7;
+  --accent2: #4f46e5;
+  --accent3: #db2777;
+  --accent4: #059669;
+  --accent5: #ea580c;
+  --danger: #dc2626;
+  --gold: #b45309;
+  --cg: #e8edf5;
+  --ca: #d1d5db;
+  --cd: #9ca3af;
+  --ct: #64748b;
+  --cl: #334155;
+  --cl2: #1e293b;
+  --cc: #e2e8f0;
+  --cb: #f8fafc;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -31,6 +64,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   padding: 2rem 3rem 1.5rem;
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
   border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+body.light .header {
+  background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 50%, #dbeafe 100%);
 }
 .header h1 { font-family:'Space Mono',monospace; font-size:1.6rem; letter-spacing:-0.5px; }
 .header h1 span { color: var(--accent); }
@@ -69,9 +106,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 }
 
 .tooltip {
-  position:absolute; pointer-events:none; background:#1e293b; border:1px solid var(--border);
+  position:absolute; pointer-events:none; background:var(--surface); border:1px solid var(--border);
   padding:0.6rem 0.8rem; border-radius:8px; font-size:0.78rem; z-index:100;
-  box-shadow:0 8px 24px rgba(0,0,0,0.4); display:none; max-width:220px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.25); display:none; max-width:220px;
 }
 .tooltip .tt-title { font-weight:700; color:var(--accent); margin-bottom:0.2rem; }
 .tooltip .tt-row { color:var(--text2); }
@@ -125,8 +162,18 @@ svg text { font-family:'DM Sans',sans-serif; }
 <body>
 
 <div class="header">
-  <h1><span>GPI</span> Consulting Dashboard Analítico</h1>
-  <p>Paz, felicidad y desempeño olímpico en el periodo 2015 a 2019</p>
+  <div>
+    <h1><span>GPI</span> Consulting Dashboard Analítico</h1>
+    <p>Paz, felicidad y desempeño olímpico en el periodo 2015 a 2019</p>
+  </div>
+  <button id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema"
+    style="background:var(--surface2);border:1px solid var(--border);color:var(--text);
+           padding:0.5rem 1rem;border-radius:8px;cursor:pointer;font-size:0.82rem;
+           font-family:'DM Sans';display:flex;align-items:center;gap:0.45rem;
+           white-space:nowrap;transition:all 0.2s;flex-shrink:0">
+    <span id="theme-icon">☀️</span>
+    <span id="theme-label">Modo claro</span>
+  </button>
 </div>
 
 <div class="tabs" id="tabs">
@@ -380,6 +427,30 @@ const REG_DATA = [{"region": "CIS", "happiness": 5.053, "peace": 2.921, "medals"
 
 const COLORS = ['#38bdf8','#818cf8','#f472b6','#34d399','#fb923c','#fbbf24','#a78bfa','#f87171','#2dd4bf','#e879f9','#60a5fa'];
 
+// Chart theme colors — updated via _updateTC() on theme toggle
+const TC = { grid:'#1e293b', axis:'#2a3548', axdiv:'#475569', text2:'#94a3b8', label:'#cbd5e1', label2:'#e2e8f0', conn:'#334155', dotbg:'#0a0e17' };
+function _updateTC() {
+  const s = getComputedStyle(document.documentElement);
+  TC.grid  = s.getPropertyValue('--cg').trim();
+  TC.axis  = s.getPropertyValue('--ca').trim();
+  TC.axdiv = s.getPropertyValue('--cd').trim();
+  TC.text2 = s.getPropertyValue('--ct').trim();
+  TC.label = s.getPropertyValue('--cl').trim();
+  TC.label2= s.getPropertyValue('--cl2').trim();
+  TC.conn  = s.getPropertyValue('--cc').trim();
+  TC.dotbg = s.getPropertyValue('--cb').trim();
+}
+
+function toggleTheme() {
+  const isLight = !document.body.classList.contains('light');
+  document.body.classList.toggle('light', isLight);
+  localStorage.setItem('gpi-theme', isLight ? 'light' : 'dark');
+  document.getElementById('theme-icon').textContent  = isLight ? '🌙' : '☀️';
+  document.getElementById('theme-label').textContent = isLight ? 'Modo oscuro' : 'Modo claro';
+  _updateTC();
+  _redrawActive();
+}
+
 // ===== FULL COUNTRY DATABASE (merged T3 + T4 + T5) for OE5 radar =====
 const ALL_COUNTRY_DATA = (() => {
   const map = {};
@@ -511,15 +582,15 @@ function drawT1() {
   // Grid
   g.selectAll('.grid').data(y.ticks(6)).join('line')
     .attr('x1',0).attr('x2',w).attr('y1',d=>y(d)).attr('y2',d=>y(d))
-    .attr('stroke','#1e293b').attr('stroke-dasharray','3,3');
+    .attr('stroke',TC.grid).attr('stroke-dasharray','3,3');
 
   // Axes
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('d')))
-    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
+    .selectAll('text').attr('fill',TC.text2).attr('font-size','11px');
   g.append('g').call(d3.axisLeft(y).ticks(6))
-    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
-  g.selectAll('.domain').attr('stroke','#2a3548');
-  g.selectAll('.tick line').attr('stroke','#2a3548');
+    .selectAll('text').attr('fill',TC.text2).attr('font-size','11px');
+  g.selectAll('.domain').attr('stroke',TC.axis);
+  g.selectAll('.tick line').attr('stroke',TC.axis);
 
   // Lines
   const line = d3.line().x(d=>x(d.Year)).y(d=>y(d.s)).curve(d3.curveMonotoneX);
@@ -560,7 +631,7 @@ function drawT1() {
   });
 
   g.append('text').attr('x',w/2).attr('y',-10).attr('text-anchor','middle')
-    .attr('fill','#94a3b8').attr('font-size','12px').text('Happiness Score promedio por región (2015–2019)');
+    .attr('fill',TC.text2).attr('font-size','12px').text('Happiness Score promedio por región (2015–2019)');
 }
 
 
@@ -589,14 +660,14 @@ function drawT2() {
   // Grid
   g.selectAll('.grid').data(y.ticks(6)).join('line')
     .attr('x1',0).attr('x2',w).attr('y1',d=>y(d)).attr('y2',d=>y(d))
-    .attr('stroke','#1e293b').attr('stroke-dasharray','3,3');
+    .attr('stroke',TC.grid).attr('stroke-dasharray','3,3');
 
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x))
-    .selectAll('text').attr('fill','#94a3b8').attr('font-size','12px').attr('font-weight',600);
+    .selectAll('text').attr('fill',TC.text2).attr('font-size','12px').attr('font-weight',600);
   g.append('g').call(d3.axisLeft(y).ticks(6))
-    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
-  g.selectAll('.domain').attr('stroke','#2a3548');
-  g.selectAll('.tick line').attr('stroke','#2a3548');
+    .selectAll('text').attr('fill',TC.text2).attr('font-size','11px');
+  g.selectAll('.domain').attr('stroke',TC.axis);
+  g.selectAll('.tick line').attr('stroke',TC.axis);
 
   groups.forEach((grp,i) => {
     const s = T2_SUMMARY[grp];
@@ -633,12 +704,12 @@ function drawT2() {
     ];
     labels.forEach(lb => {
       g.append('text').attr('x',cx+bw/2+8).attr('y',y(lb.v)+4)
-        .text(lb.l).attr('fill','#94a3b8').attr('font-size','9px');
+        .text(lb.l).attr('fill',TC.text2).attr('font-size','9px');
     });
   });
 
   g.append('text').attr('x',w/2).attr('y',h+45).attr('text-anchor','middle')
-    .attr('fill','#94a3b8').attr('font-size','11px').text('Overall Peace Score (menor = más pacífico)');
+    .attr('fill',TC.text2).attr('font-size','11px').text('Overall Peace Score (menor = más pacífico)');
 
   // Cross-filter overlay: show selected country's peace score as a marker
   if (_sel.country) {
@@ -726,17 +797,17 @@ function drawT3() {
     const bx2 = x(toCountry) + x.bandwidth();
     g.append('text').attr('x',(bx1+bx2)/2).attr('y',-20)
       .text(bandLabels[qi]).attr('text-anchor','middle')
-      .attr('fill','#94a3b8')
+      .attr('fill',TC.text2)
       .attr('font-size','10px').attr('font-weight',600);
     // vertical divider
     if(qi>0) g.append('line').attr('x1',bx1).attr('x2',bx1).attr('y1',-28).attr('y2',h)
-      .attr('stroke','#2a3548').attr('stroke-width',1).attr('stroke-dasharray','4,3');
+      .attr('stroke',TC.axis).attr('stroke-width',1).attr('stroke-dasharray','4,3');
   });
 
   // Grid lines
   g.selectAll('.grid').data(y.ticks(5)).join('line')
     .attr('x1',0).attr('x2',w).attr('y1',d=>y(d)).attr('y2',d=>y(d))
-    .attr('stroke','#1e293b').attr('stroke-dasharray','3,3');
+    .attr('stroke',TC.grid).attr('stroke-dasharray','3,3');
 
   // Lollipop stems
   g.selectAll('.stem').data(data).join('line')
@@ -799,22 +870,22 @@ function drawT3() {
   );
   g.selectAll('.lbl').data(notable).join('text')
     .attr('x',d=>x(d.c)+x.bandwidth()/2).attr('y',d=>y(d.m)-12)
-    .text(d=>d.c).attr('text-anchor','middle').attr('fill','#cbd5e1')
+    .text(d=>d.c).attr('text-anchor','middle').attr('fill',TC.label)
     .attr('font-size','9px').attr('font-weight',600);
 
   // Axes
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).tickValues([]))
-    .selectAll('.domain').attr('stroke','#2a3548');
+    .selectAll('.domain').attr('stroke',TC.axis);
   g.append('g').call(d3.axisLeft(y).tickValues([1,2,5,10,20,50,100,150]).tickFormat(d3.format('d')))
-    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
-  g.selectAll('.domain').attr('stroke','#2a3548');
-  g.selectAll('.tick line').attr('stroke','#2a3548');
+    .selectAll('text').attr('fill',TC.text2).attr('font-size','11px');
+  g.selectAll('.domain').attr('stroke',TC.axis);
+  g.selectAll('.tick line').attr('stroke',TC.axis);
 
   g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-50)
-    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px')
+    .attr('text-anchor','middle').attr('fill',TC.text2).attr('font-size','11px')
     .text('Total de medallas olímpicas');
   g.append('text').attr('x',w/2).attr('y',h+30).attr('text-anchor','middle')
-    .attr('fill','#94a3b8').attr('font-size','11px')
+    .attr('fill',TC.text2).attr('font-size','11px')
     .text('Países ordenados por GDP per Cápita, de menor a mayor');
 
   // Color legend
@@ -825,11 +896,11 @@ function drawT3() {
   grad.append('stop').attr('offset','100%').attr('stop-color','#34d399');
 
   const legX = W - 280, legY = H - 45;
-  svg.append('text').attr('x',legX).attr('y',legY).attr('fill','#e2e8f0').attr('font-size','12px').attr('font-weight',600).text('Happiness Score');
+  svg.append('text').attr('x',legX).attr('y',legY).attr('fill',TC.label2).attr('font-size','12px').attr('font-weight',600).text('Happiness Score');
   svg.append('rect').attr('x',legX).attr('y',legY + 8).attr('width',220).attr('height',14)
     .attr('fill','url(#happyGrad)').attr('rx',4);
-  svg.append('text').attr('x',legX).attr('y',legY + 36).attr('fill','#94a3b8').attr('font-size','11px').text('Bajo (3.0)');
-  svg.append('text').attr('x',legX+220).attr('y',legY + 36).attr('fill','#94a3b8').attr('font-size','11px').attr('text-anchor','end').text('Alto (7.5)');
+  svg.append('text').attr('x',legX).attr('y',legY + 36).attr('fill',TC.text2).attr('font-size','11px').text('Bajo (3.0)');
+  svg.append('text').attr('x',legX+220).attr('y',legY + 36).attr('fill',TC.text2).attr('font-size','11px').attr('text-anchor','end').text('Alto (7.5)');
 }
 
 
@@ -852,19 +923,19 @@ function drawT4() {
   // Grid
   g.selectAll('.gridy').data(y.ticks(6)).join('line')
     .attr('x1',0).attr('x2',w).attr('y1',d=>y(d)).attr('y2',d=>y(d))
-    .attr('stroke','#1e293b').attr('stroke-dasharray','3,3');
+    .attr('stroke',TC.grid).attr('stroke-dasharray','3,3');
 
   // Quadrant lines
   g.append('line').attr('x1',x(medP)).attr('x2',x(medP)).attr('y1',0).attr('y2',h)
-    .attr('stroke','#475569').attr('stroke-width',1.5).attr('stroke-dasharray','6,4');
+    .attr('stroke',TC.axdiv).attr('stroke-width',1.5).attr('stroke-dasharray','6,4');
   g.append('line').attr('x1',0).attr('x2',w).attr('y1',y(medH)).attr('y2',y(medH))
-    .attr('stroke','#475569').attr('stroke-width',1.5).attr('stroke-dasharray','6,4');
+    .attr('stroke',TC.axdiv).attr('stroke-width',1.5).attr('stroke-dasharray','6,4');
 
   // Quadrant labels
   const qlabels = [
     {x:x(medP)/2, y:20, t:'Feliz & Pacífico ✓', c:'#34d399'},
     {x:x(medP)+(w-x(medP))/2, y:20, t:'Feliz & Conflictivo ⚠', c:'#fbbf24'},
-    {x:x(medP)/2, y:h-10, t:'Infeliz & Pacífico', c:'#94a3b8'},
+    {x:x(medP)/2, y:h-10, t:'Infeliz & Pacífico', c:TC.text2},
     {x:x(medP)+(w-x(medP))/2, y:h-10, t:'Infeliz & Conflictivo ✗', c:'#ef4444'}
   ];
   qlabels.forEach(ql => {
@@ -873,11 +944,11 @@ function drawT4() {
   });
 
   g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(6))
-    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
+    .selectAll('text').attr('fill',TC.text2).attr('font-size','11px');
   g.append('g').call(d3.axisLeft(y).ticks(6))
-    .selectAll('text').attr('fill','#94a3b8').attr('font-size','11px');
-  g.selectAll('.domain').attr('stroke','#2a3548');
-  g.selectAll('.tick line').attr('stroke','#2a3548');
+    .selectAll('text').attr('fill',TC.text2).attr('font-size','11px');
+  g.selectAll('.domain').attr('stroke',TC.axis);
+  g.selectAll('.tick line').attr('stroke',TC.axis);
 
   const getQuadColor = d => {
     if(d.h>=medH && d.p<=medP) return '#34d399';
@@ -924,12 +995,12 @@ function drawT4() {
   const outliers = T4_DATA.filter(d=>(d.h>6.5&&d.p>2.3)||(d.h>7.3)||(d.p>3)||(d.h<3.5)||(d.c==='Israel')||(d.c==='Colombia')||(d.c==='Somalia'));
   g.selectAll('.olbl').data(outliers).join('text')
     .attr('x',d=>x(d.p)+7).attr('y',d=>y(d.h)+3)
-    .text(d=>d.c).attr('fill','#cbd5e1').attr('font-size','8.5px');
+    .text(d=>d.c).attr('fill',TC.label).attr('font-size','8.5px');
 
   g.append('text').attr('x',w/2).attr('y',h+40).attr('text-anchor','middle')
-    .attr('fill','#94a3b8').attr('font-size','11px').text('Overall Peace Score');
+    .attr('fill',TC.text2).attr('font-size','11px').text('Overall Peace Score');
   g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-45)
-    .attr('text-anchor','middle').attr('fill','#94a3b8').attr('font-size','11px').text('← Happiness Score');
+    .attr('text-anchor','middle').attr('fill',TC.text2).attr('font-size','11px').text('← Happiness Score');
 }
 
 
@@ -966,10 +1037,10 @@ function drawT5() {
       pts.push([R*lvl*Math.cos(a), R*lvl*Math.sin(a)]);
     }
     g.append('polygon').attr('points',pts.map(p=>p.join(',')).join(' '))
-      .attr('fill','none').attr('stroke','#1e293b').attr('stroke-width',1);
+      .attr('fill','none').attr('stroke',TC.grid).attr('stroke-width',1);
     if(lvl===1) {
       g.append('polygon').attr('points',pts.map(p=>p.join(',')).join(' '))
-        .attr('fill','none').attr('stroke','#2a3548').attr('stroke-width',1.5);
+        .attr('fill','none').attr('stroke',TC.axis).attr('stroke-width',1.5);
     }
   });
 
@@ -978,9 +1049,9 @@ function drawT5() {
     const a = angleSlice*i - Math.PI/2;
     const lx = (R+25)*Math.cos(a), ly = (R+25)*Math.sin(a);
     g.append('line').attr('x1',0).attr('y1',0).attr('x2',R*Math.cos(a)).attr('y2',R*Math.sin(a))
-      .attr('stroke','#2a3548').attr('stroke-width',1);
+      .attr('stroke',TC.axis).attr('stroke-width',1);
     const axLabel = g.append('text').attr('x',lx).attr('y',ly+4).attr('text-anchor','middle')
-      .attr('fill','#94a3b8').attr('font-size','11px').attr('font-weight',600)
+      .attr('fill',TC.text2).attr('font-size','11px').attr('font-weight',600)
       .attr('cursor','pointer').text(dim.label);
     axLabel.on('mouseover', function(ev) {
         const tip = document.getElementById('tip-t5');
@@ -1021,7 +1092,7 @@ function drawT5() {
           : `${dim.label}: ${dim.key==='medals' ? rawVal : (rawVal.toFixed ? rawVal.toFixed(3) : rawVal)}`;
         g.append('circle').attr('class','radar-dot')
           .attr('cx',p[0]).attr('cy',p[1]).attr('r',5)
-          .attr('fill',color).attr('stroke','#0a0e17').attr('stroke-width',1.5)
+          .attr('fill',color).attr('stroke',TC.dotbg).attr('stroke-width',1.5)
           .attr('cursor','pointer')
           .on('mouseover', function(ev) {
             d3.select(this).attr('r',9).attr('stroke','#fff').attr('stroke-width',2);
@@ -1033,7 +1104,7 @@ function drawT5() {
             tip.style.top  = (ev.clientY - rect.top  - 50) + 'px';
           })
           .on('mouseout', function() {
-            d3.select(this).attr('r',5).attr('stroke','#0a0e17').attr('stroke-width',1.5);
+            d3.select(this).attr('r',5).attr('stroke',TC.dotbg).attr('stroke-width',1.5);
             document.getElementById('tip-t5').style.display = 'none';
           });
       });
@@ -1179,7 +1250,7 @@ function drawObj() {
   // Light grid lines
   g.selectAll('.gx').data(x.ticks(4)).join('line')
     .attr('x1',d=>x(d)).attr('x2',d=>x(d)).attr('y1',0).attr('y2',h)
-    .attr('stroke','#1e293b').attr('stroke-dasharray','3,4');
+    .attr('stroke',TC.grid).attr('stroke-dasharray','3,4');
 
   // Per-region: connecting line + 3 dots
   data.forEach(d => {
@@ -1203,7 +1274,7 @@ function drawObj() {
     g.append('line')
       .attr('x1', minX).attr('x2', maxX)
       .attr('y1', cy).attr('y2', cy)
-      .attr('stroke','#334155').attr('stroke-width', 1.5)
+      .attr('stroke',TC.conn).attr('stroke-width', 1.5)
       .attr('opacity', rowOp);
 
     // 3 dots
@@ -1215,7 +1286,7 @@ function drawObj() {
         .attr('cx', x(vn)).attr('cy', cy).attr('r', isHL ? 7 : 4)
         .attr('fill', colors[i])
         .attr('opacity', isHL ? rowOp : rowOp * 0.25)
-        .attr('stroke', '#0a0e17').attr('stroke-width', 1.5)
+        .attr('stroke', TC.dotbg).attr('stroke-width', 1.5)
         .attr('cursor','pointer')
         .on('mouseover', function(ev) {
           d3.select(this).attr('r', 10);
@@ -1242,7 +1313,7 @@ function drawObj() {
       .attr('x',-10).attr('y', cy+4)
       .text(shortName(d.region))
       .attr('text-anchor','end')
-      .attr('fill', isSelR ? 'var(--accent)' : '#cbd5e1')
+      .attr('fill', isSelR ? 'var(--accent)' : TC.label)
       .attr('font-size','11px').attr('font-weight', isSelR ? 700 : 400)
       .attr('opacity', rowOp).attr('cursor','pointer')
       .on('click', () => _setSel('region', d.region));
@@ -1251,21 +1322,21 @@ function drawObj() {
   // X axis
   g.append('g').attr('transform',`translate(0,${h})`)
     .call(d3.axisBottom(x).ticks(4).tickFormat(d3.format('.0%')))
-    .selectAll('text').attr('fill','#94a3b8').attr('font-size','10px');
-  g.selectAll('.domain').attr('stroke','#2a3548');
-  g.selectAll('.tick line').attr('stroke','#2a3548');
+    .selectAll('text').attr('fill',TC.text2).attr('font-size','10px');
+  g.selectAll('.domain').attr('stroke',TC.axis);
+  g.selectAll('.tick line').attr('stroke',TC.axis);
 
   g.append('text').attr('x',w/2).attr('y',h+34)
     .text('Posición relativa dentro del rango global (0% = peor, 100% = mejor)')
-    .attr('text-anchor','middle').attr('fill','#64748b').attr('font-size','10px');
+    .attr('text-anchor','middle').attr('fill',TC.text2).attr('font-size','10px');
 
   // Legend top
   const legG = g.append('g').attr('transform',`translate(${w/2-130}, -32)`);
   labels.forEach((lbl,i) => {
     legG.append('circle').attr('cx',i*130).attr('cy',0).attr('r',6)
-      .attr('fill',colors[i]).attr('stroke','#0a0e17').attr('stroke-width',1.5);
+      .attr('fill',colors[i]).attr('stroke',TC.dotbg).attr('stroke-width',1.5);
     legG.append('text').attr('x',i*130+12).attr('y',4)
-      .text(lbl).attr('fill','#94a3b8').attr('font-size','10px');
+      .text(lbl).attr('fill',TC.text2).attr('font-size','10px');
   });
 }
 
@@ -1282,6 +1353,18 @@ window.addEventListener('resize', () => {
   const i = +document.querySelector('.tab.active').dataset.tab;
   _drawFns[i]();
 });
+
+// Restore saved theme preference
+(function() {
+  const saved = localStorage.getItem('gpi-theme');
+  if (saved === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('theme-icon').textContent  = '🌙';
+    document.getElementById('theme-label').textContent = 'Modo oscuro';
+    _updateTC();
+  }
+})();
+
 drawDesc();
 </script>
 </body>
