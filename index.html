@@ -342,7 +342,7 @@ svg text { font-family:'DM Sans',sans-serif; }
     </div>
     <div>
       <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:0.5rem">OE5: Perfil Multidimensional Top 10</h3>
-      <p style="color:var(--text2); font-size:0.83rem; margin-bottom:0.8rem">Compara los 10 países con más medallas en 5 dimensiones. Selecciona países para comparar.</p>
+      <p style="color:var(--text2); font-size:0.83rem; margin-bottom:0.8rem">Compara cualquier país de la base de datos en 5 dimensiones. Busca y agrega países para comparar sus perfiles.</p>
       <div class="filters" id="t5-filters"></div>
       <div class="chart-container">
         <svg id="chart-t5" width="100%" height="420"></svg>
@@ -369,6 +369,26 @@ const OBJ_DATA = [{"country": "Argentina", "medals": 4, "happiness": 6.459, "gdp
 const REG_DATA = [{"region": "CIS", "happiness": 5.053, "peace": 2.921, "medals": 68, "countries": 2}, {"region": "Central/Eastern Europe", "happiness": 5.988, "peace": 1.476, "medals": 46, "countries": 3}, {"region": "Eastern Asia", "happiness": 5.677, "peace": 1.734, "medals": 171, "countries": 3}, {"region": "Latin America", "happiness": 6.229, "peace": 2.29, "medals": 50, "countries": 6}, {"region": "Middle East", "happiness": 5.428, "peace": 2.188, "medals": 13, "countries": 4}, {"region": "North America", "happiness": 7.175, "peace": 1.807, "medals": 195, "countries": 2}, {"region": "Oceania", "happiness": 7.294, "peace": 1.346, "medals": 52, "countries": 2}, {"region": "Southeast Asia", "happiness": 5.867, "peace": 1.909, "medals": 11, "countries": 4}, {"region": "Southern Asia", "happiness": 4.298, "peace": 2.356, "medals": 2, "countries": 1}, {"region": "Sub-Saharan Africa", "happiness": 4.75, "peace": 2.478, "medals": 24, "countries": 3}, {"region": "Western Europe", "happiness": 7.05, "peace": 1.566, "medals": 436, "countries": 15}];
 
 const COLORS = ['#38bdf8','#818cf8','#f472b6','#34d399','#fb923c','#fbbf24','#a78bfa','#f87171','#2dd4bf','#e879f9','#60a5fa'];
+
+// ===== FULL COUNTRY DATABASE (merged T3 + T4 + T5) for OE5 radar =====
+const ALL_COUNTRY_DATA = (() => {
+  const map = {};
+  T3_DATA.forEach(d => {
+    map[d.c] = { country: d.c, medals: d.m, happiness: d.h, gdp: d.g, freedom: 0, peace: 0 };
+  });
+  T4_DATA.forEach(d => {
+    if (!map[d.c]) map[d.c] = { country: d.c, medals: 0, happiness: d.h, gdp: 0, freedom: 0, peace: d.p };
+    else map[d.c].peace = d.p;
+  });
+  T5_DATA.forEach(d => {
+    if (!map[d.country]) map[d.country] = { ...d };
+    else { map[d.country].freedom = d.freedom; map[d.country].peace = d.peace; }
+  });
+  return Object.values(map).sort((a, b) => a.country.localeCompare(b.country));
+})();
+
+// Persistent selection state for T5 radar (survives redraws)
+const _t5selected = new Set(['Canada', 'Norway', 'Russia', 'China']);
 
 
 // ===== FILTER STATE =====
@@ -905,6 +925,11 @@ function drawT4() {
 
 // ===== T5: RADAR CHART =====
 function drawT5() {
+  // Cross-filter: auto-add globally selected country if available
+  if (_sel.country && ALL_COUNTRY_DATA.some(d => d.country === _sel.country)) {
+    _t5selected.add(_sel.country);
+  }
+
   const svg = d3.select('#chart-t5');
   svg.selectAll('*').remove();
   const W = getW('chart-t5'), H = 480;
@@ -912,11 +937,11 @@ function drawT5() {
   const cx = W/2, cy = H/2 - 10, R = Math.min(W,H)/2 - 60;
 
   const dims = [
-    {key:'medals',label:'Medallas',max:144},
+    {key:'medals',   label:'Medallas', max:144},
     {key:'happiness',label:'Felicidad',max:8},
-    {key:'gdp',label:'GDP',max:1.6},
-    {key:'freedom',label:'Libertad',max:0.7},
-    {key:'peace',label:'Paz (inv)',max:3.5,invert:true}
+    {key:'gdp',      label:'GDP',      max:1.6},
+    {key:'freedom',  label:'Libertad', max:0.7},
+    {key:'peace',    label:'Paz (inv)',max:3.5, invert:true}
   ];
   const n = dims.length;
   const angleSlice = (2*Math.PI)/n;
@@ -947,53 +972,43 @@ function drawT5() {
     const axLabel = g.append('text').attr('x',lx).attr('y',ly+4).attr('text-anchor','middle')
       .attr('fill','#94a3b8').attr('font-size','11px').attr('font-weight',600)
       .attr('cursor','pointer').text(dim.label);
-
     axLabel.on('mouseover', function(ev) {
         const tip = document.getElementById('tip-t5');
         tip.style.display = 'block';
         const scaleNote = dim.invert
           ? `Escala invertida. Máx real: ${dim.max} (más bajo = más pacífico)`
-          : `Rango: 0 a ${dim.max}`;
+          : dim.key === 'freedom'
+            ? `Rango: 0 a ${dim.max}. Solo disponible para los 10 países con más medallas.`
+            : `Rango: 0 a ${dim.max}`;
         tip.innerHTML = `<div class="tt-title">${dim.label}</div><div class="tt-row">${scaleNote}</div>`;
         const rect = svg.node().getBoundingClientRect();
         tip.style.left = (ev.clientX - rect.left + 14) + 'px';
         tip.style.top  = (ev.clientY - rect.top  - 50) + 'px';
       })
-      .on('mouseout', function() {
-        document.getElementById('tip-t5').style.display = 'none';
-      });
+      .on('mouseout', function() { document.getElementById('tip-t5').style.display = 'none'; });
   });
 
-  // Default: show Canada, Norway, Russia, China
-  const defaultShow = ['Canada','Norway','Russia','China'];
-  const selected = new Set(defaultShow);
-
-  // Cross-filter: if a country is selected globally and it's in the top-10, auto-add it
-  if (_sel.country && T5_DATA.some(d => d.country === _sel.country)) {
-    selected.add(_sel.country);
-  }
-
-  function drawRadars() {
+  function _renderRadars() {
     g.selectAll('.radar-path,.radar-dot').remove();
-    const shown = T5_DATA.filter(d=>selected.has(d.country));
-    shown.forEach((country,ci) => {
-      const color = COLORS[T5_DATA.indexOf(country) % COLORS.length];
-      const pts = dims.map((dim,i) => {
+    const shown = ALL_COUNTRY_DATA.filter(d => _t5selected.has(d.country));
+    shown.forEach((country, ci) => {
+      const color = COLORS[ci % COLORS.length];
+      const pts = dims.map((dim, i) => {
         let val = country[dim.key] || 0;
         if(dim.invert) val = dim.max - val;
         const norm = Math.max(0, Math.min(1, val / dim.max));
         const a = angleSlice*i - Math.PI/2;
         return [R*norm*Math.cos(a), R*norm*Math.sin(a)];
       });
-      g.append('polygon').attr('class','radar-path').attr('points',pts.map(p=>p.join(',')).join(' '))
+      g.append('polygon').attr('class','radar-path')
+        .attr('points',pts.map(p=>p.join(',')).join(' '))
         .attr('fill',color).attr('fill-opacity',0.1).attr('stroke',color).attr('stroke-width',2.5);
       pts.forEach((p,i) => {
-        const dim   = dims[i];
+        const dim    = dims[i];
         const rawVal = country[dim.key] || 0;
         const label  = dim.invert
           ? `${dim.label}: ${rawVal.toFixed ? rawVal.toFixed(3) : rawVal} (menor = mejor)`
-          : `${dim.label}: ${dim.key==='medals' ? rawVal : rawVal.toFixed ? rawVal.toFixed(3) : rawVal}`;
-
+          : `${dim.label}: ${dim.key==='medals' ? rawVal : (rawVal.toFixed ? rawVal.toFixed(3) : rawVal)}`;
         g.append('circle').attr('class','radar-dot')
           .attr('cx',p[0]).attr('cy',p[1]).attr('r',5)
           .attr('fill',color).attr('stroke','#0a0e17').attr('stroke-width',1.5)
@@ -1002,8 +1017,7 @@ function drawT5() {
             d3.select(this).attr('r',9).attr('stroke','#fff').attr('stroke-width',2);
             const tip = document.getElementById('tip-t5');
             tip.style.display = 'block';
-            tip.innerHTML = `<div class="tt-title">${country.country}</div>
-              <div class="tt-row">${label}</div>`;
+            tip.innerHTML = `<div class="tt-title">${country.country}</div><div class="tt-row">${label}</div>`;
             const rect = svg.node().getBoundingClientRect();
             tip.style.left = (ev.clientX - rect.left + 14) + 'px';
             tip.style.top  = (ev.clientY - rect.top  - 50) + 'px';
@@ -1014,30 +1028,99 @@ function drawT5() {
           });
       });
     });
+    _renderT5Tags();
+    _renderT5Legend();
   }
 
-  // Filters
-  const filtersDiv = document.getElementById('t5-filters');
-  filtersDiv.innerHTML = '<span class="filter-label">Países:</span>';
-  T5_DATA.forEach((d,i) => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn' + (selected.has(d.country) ? ' active' : '');
-    btn.textContent = d.country;
-    btn.style.borderColor = selected.has(d.country) ? COLORS[i] : '';
-    btn.style.background = selected.has(d.country) ? COLORS[i] : '';
-    btn.style.color = selected.has(d.country) ? '#0a0e17' : '';
-    btn.addEventListener('click', () => {
-      if(selected.has(d.country)) selected.delete(d.country); else selected.add(d.country);
-      btn.classList.toggle('active');
-      btn.style.borderColor = selected.has(d.country) ? COLORS[i] : '';
-      btn.style.background = selected.has(d.country) ? COLORS[i] : '';
-      btn.style.color = selected.has(d.country) ? '#0a0e17' : '';
-      drawRadars();
+  function _renderT5Tags() {
+    const tagsDiv = document.getElementById('t5-tags');
+    if (!tagsDiv) return;
+    tagsDiv.innerHTML = '';
+    const shown = ALL_COUNTRY_DATA.filter(d => _t5selected.has(d.country));
+    shown.forEach((d, ci) => {
+      const color = COLORS[ci % COLORS.length];
+      const tag = document.createElement('span');
+      tag.style.cssText = `display:inline-flex;align-items:center;gap:0.25rem;background:${color}20;border:1px solid ${color}55;color:${color};padding:0.2rem 0.45rem 0.2rem 0.6rem;border-radius:20px;font-size:0.74rem;font-weight:600;white-space:nowrap`;
+      const esc = d.country.replace(/'/g,"\\'");
+      tag.innerHTML = `${d.country} <button onclick="_t5Remove('${esc}')" title="Quitar" style="background:none;border:none;color:${color};cursor:pointer;padding:0;font-size:0.85rem;line-height:1;opacity:0.7" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">✕</button>`;
+      tagsDiv.appendChild(tag);
     });
-    filtersDiv.appendChild(btn);
-  });
+  }
 
-  drawRadars();
+  function _renderT5Legend() {
+    const legDiv = document.getElementById('legend-t5');
+    if (!legDiv) return;
+    legDiv.innerHTML = '';
+    const shown = ALL_COUNTRY_DATA.filter(d => _t5selected.has(d.country));
+    shown.forEach((d, ci) => {
+      const color = COLORS[ci % COLORS.length];
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<div class="legend-dot" style="background:${color}"></div>${d.country}`;
+      legDiv.appendChild(item);
+    });
+  }
+
+  // Build search UI (rebuilt each draw, state lives in _t5selected)
+  const filtersDiv = document.getElementById('t5-filters');
+  filtersDiv.innerHTML = `
+    <div style="position:relative;width:100%;max-width:280px">
+      <input id="t5-search" type="text" placeholder="🔍 Buscar país..." autocomplete="off"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.4rem 0.8rem;border-radius:6px;font-size:0.8rem;font-family:'DM Sans';outline:none;transition:border-color 0.15s"
+        oninput="_t5SearchInput(this.value)"
+        onkeydown="_t5SearchKeydown(event)"
+        onfocus="this.style.borderColor='var(--accent)'"
+        onblur="setTimeout(_t5HideDropdown,160);this.style.borderColor='var(--border)'">
+      <div id="t5-dropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#1e293b;border:1px solid var(--border);border-radius:8px;z-index:200;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.5)"></div>
+    </div>
+    <div id="t5-tags" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem"></div>`;
+
+  _renderRadars();
+
+  // Search helpers (exposed to window so inline onclick works after redraws)
+  window._t5SearchInput = function(val) {
+    const dd = document.getElementById('t5-dropdown');
+    if (!val.trim()) { dd.style.display='none'; return; }
+    const q = val.toLowerCase();
+    const matches = ALL_COUNTRY_DATA
+      .filter(d => d.country.toLowerCase().includes(q) && !_t5selected.has(d.country))
+      .slice(0, 10);
+    if (!matches.length) { dd.innerHTML = `<div style="padding:0.5rem 0.8rem;font-size:0.8rem;color:var(--text2)">Sin resultados</div>`; dd.style.display='block'; return; }
+    dd.style.display = 'block';
+    dd.innerHTML = matches.map(d => {
+      const esc = d.country.replace(/'/g,"\\'");
+      return `<div onclick="_t5Add('${esc}')" style="padding:0.42rem 0.8rem;cursor:pointer;font-size:0.82rem;color:var(--text);display:flex;justify-content:space-between;align-items:center" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+        <span>${d.country}</span>
+        <span style="font-size:0.7rem;color:var(--text2)">${d.medals ? d.medals+'🏅' : '—'}</span>
+      </div>`;
+    }).join('');
+  };
+
+  window._t5SearchKeydown = function(ev) {
+    if (ev.key === 'Escape') { _t5HideDropdown(); }
+    if (ev.key === 'Enter') {
+      const first = document.querySelector('#t5-dropdown div[onclick]');
+      if (first) first.click();
+    }
+  };
+
+  window._t5HideDropdown = function() {
+    const dd = document.getElementById('t5-dropdown');
+    if (dd) dd.style.display = 'none';
+  };
+
+  window._t5Add = function(country) {
+    _t5selected.add(country);
+    const inp = document.getElementById('t5-search');
+    if (inp) inp.value = '';
+    _t5HideDropdown();
+    _renderRadars();
+  };
+
+  window._t5Remove = function(country) {
+    _t5selected.delete(country);
+    _renderRadars();
+  };
 }
 
 
