@@ -111,8 +111,11 @@ body.light .header {
 }
 
 .tooltip {
-  display:none !important;
+  position:absolute; pointer-events:none; background:var(--surface); border:1px solid var(--border);
+  padding:0.6rem 0.8rem; border-radius:8px; font-size:0.78rem; z-index:100;
+  box-shadow:0 8px 24px rgba(0,0,0,0.25); display:none; max-width:220px;
 }
+#tip-obj, #tip-t1, #tip-t2, #tip-t3, #tip-t5 { display:none !important; }
 .tooltip .tt-title { font-weight:700; color:var(--accent); margin-bottom:0.2rem; }
 .tooltip .tt-row { color:var(--text2); }
 .tooltip .tt-val { color:var(--text); font-weight:500; }
@@ -718,18 +721,6 @@ function drawT2() {
     g.append('circle').attr('cx',cx).attr('cy',y(s.mean)).attr('r',5)
       .attr('fill',colors[i]).attr('stroke','#fff').attr('stroke-width',1.5);
 
-    // Labels
-    const labels = [
-      {v:s.max,l:'Máx: '+s.max.toFixed(2)},
-      {v:s.q3,l:'Q3: '+s.q3.toFixed(2)},
-      {v:s.median,l:'Med: '+s.median.toFixed(2)},
-      {v:s.q1,l:'Q1: '+s.q1.toFixed(2)},
-      {v:s.min,l:'Mín: '+s.min.toFixed(2)}
-    ];
-    labels.forEach(lb => {
-      g.append('text').attr('x',cx+bw/2+8).attr('y',y(lb.v)+4)
-        .text(lb.l).attr('fill',TC.text2).attr('font-size','9px');
-    });
   });
 
   g.append('text').attr('x',w/2).attr('y',h+45).attr('text-anchor','middle')
@@ -756,10 +747,7 @@ function drawT2() {
 
   // Stats cards
   const statsDiv = document.getElementById('t2-stats');
-  statsDiv.innerHTML = groups.map((grp,i) => {
-    const s = T2_SUMMARY[grp];
-    return `<div class="stat-card"><div class="stat-label" style="color:${colors[i]}">${grp}</div><div class="stat-value" style="color:${colors[i]}">${s.median.toFixed(3)}</div><div class="stat-sub">Mediana n=${s.count}  μ=${s.mean.toFixed(3)}</div></div>`;
-  }).join('') + `<div class="stat-card"><div class="stat-label">Diferencia</div><div class="stat-value" style="color:#34d399">-0.128</div><div class="stat-sub">Los medallistas son ligeramente más pacíficos</div></div>`;
+  statsDiv.innerHTML = '';
 }
 
 
@@ -1001,7 +989,7 @@ function drawT4() {
       d3.select(this).attr('r', _sel.country===d.c ? 11 : 9).attr('fill-opacity',1);
       const tip = document.getElementById('tip-t4');
       tip.style.display='block';
-      tip.innerHTML=`<div class="tt-title">${d.c}</div><div class="tt-row">Felicidad: <span class="tt-val">${d.h.toFixed(3)}</span></div><div class="tt-row">Paz (Overall): <span class="tt-val">${d.p.toFixed(3)}</span></div><div class="tt-row" style="color:var(--accent);margin-top:0.3rem;font-size:0.7rem">Clic para filtrar país</div>`;
+      tip.innerHTML=`<div class="tt-title">${d.c}</div>`;
       tip.style.left=(ev.offsetX+15)+'px'; tip.style.top=(ev.offsetY-50)+'px';
     })
     .on('mouseout', function(ev,d) {
