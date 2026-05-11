@@ -115,7 +115,7 @@ body.light .header {
   padding:0.6rem 0.8rem; border-radius:8px; font-size:0.78rem; z-index:100;
   box-shadow:0 8px 24px rgba(0,0,0,0.25); display:none; max-width:220px;
 }
-#tip-obj, #tip-t1, #tip-t2, #tip-t3, #tip-t5 { display:none !important; }
+#tip-obj, #tip-t1, #tip-t2, #tip-t5 { display:none !important; }
 .tooltip .tt-title { font-weight:700; color:var(--accent); margin-bottom:0.2rem; }
 .tooltip .tt-row { color:var(--text2); }
 .tooltip .tt-val { color:var(--text); font-weight:500; }
@@ -850,11 +850,7 @@ function drawT3() {
       d3.select(this).attr('r', base + (_sel.country===d.c ? 3 : 0) + 3).attr('opacity',1);
       const tip = document.getElementById('tip-t3');
       tip.style.display='block';
-      tip.innerHTML=`<div class="tt-title">${d.c}</div>
-        <div class="tt-row">Medallas: <span class="tt-val">${d.m}</span></div>
-        <div class="tt-row">GDP per Cápita: <span class="tt-val">${d.g.toFixed(3)}</span></div>
-        <div class="tt-row">Happiness: <span class="tt-val">${d.h.toFixed(3)}</span></div>
-        <div class="tt-row" style="color:var(--accent);margin-top:0.3rem;font-size:0.7rem">Clic para filtrar país</div>`;
+      tip.innerHTML=`<div class="tt-title">${d.c}</div>`;
       tip.style.left=(ev.offsetX+15)+'px'; tip.style.top=(ev.offsetY-60)+'px';
     })
     .on('mouseout', function(ev,d) {
