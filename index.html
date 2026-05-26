@@ -800,21 +800,27 @@ function drawT3() {
   ];
   const bandColors = ['rgba(239,68,68,0.06)','rgba(251,191,36,0.06)','rgba(56,189,248,0.06)','rgba(52,211,153,0.06)'];
   const bandLabels = ['GDP Bajo','GDP Medio-Bajo','GDP Medio-Alto','GDP Alto'];
-  [0,1,2,3].forEach(qi => {
-    const fromIdx = Math.floor(N*qi*0.25);
-    const toIdx = qi===3 ? N : Math.floor(N*(qi+1)*0.25);
-    const fromCountry = data[fromIdx].c;
-    const toCountry = data[toIdx-1].c;
-    const bx1 = x(fromCountry);
-    const bx2 = x(toCountry) + x.bandwidth();
-    g.append('text').attr('x',(bx1+bx2)/2).attr('y',-20)
-      .text(bandLabels[qi]).attr('text-anchor','middle')
-      .attr('fill',TC.text2)
+  if (gdpQSel === 'all') {
+    [0,1,2,3].forEach(qi => {
+      const fromIdx = Math.floor(N*qi*0.25);
+      const toIdx = qi===3 ? N : Math.floor(N*(qi+1)*0.25);
+      const fromCountry = data[fromIdx].c;
+      const toCountry = data[toIdx-1].c;
+      const bx1 = x(fromCountry);
+      const bx2 = x(toCountry) + x.bandwidth();
+      g.append('text').attr('x',(bx1+bx2)/2).attr('y',-20)
+        .text(bandLabels[qi]).attr('text-anchor','middle')
+        .attr('fill',TC.text2)
+        .attr('font-size','10px').attr('font-weight',600);
+      if(qi>0) g.append('line').attr('x1',bx1).attr('x2',bx1).attr('y1',-28).attr('y2',h)
+        .attr('stroke',TC.axis).attr('stroke-width',1).attr('stroke-dasharray','4,3');
+    });
+  } else {
+    g.append('text').attr('x', w/2).attr('y', -20)
+      .text(bandLabels[+gdpQSel]).attr('text-anchor','middle')
+      .attr('fill', TC.text2)
       .attr('font-size','10px').attr('font-weight',600);
-    // vertical divider
-    if(qi>0) g.append('line').attr('x1',bx1).attr('x2',bx1).attr('y1',-28).attr('y2',h)
-      .attr('stroke',TC.axis).attr('stroke-width',1).attr('stroke-dasharray','4,3');
-  });
+  }
 
   // Grid lines
   g.selectAll('.grid').data(y.ticks(5)).join('line')
