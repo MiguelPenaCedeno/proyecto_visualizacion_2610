@@ -311,6 +311,18 @@ svg text { font-family:'DM Sans',sans-serif; }
     <h2>OE1: Tendencias de Felicidad por Región</h2>
     <p>Evolución del nivel de felicidad promedio por región geográfica entre 2015 y 2019. Haz clic en una línea o punto para filtrar el dashboard por esa región.</p>
   </div>
+  <div class="filters" style="gap:0.5rem;margin-bottom:0.4rem">
+    <span class="filter-label">Score promedio</span>
+    <button class="filter-btn active" onclick="t1ScoreRange('all',this)">Todos</button>
+    <button class="filter-btn" onclick="t1ScoreRange('low',this)">Bajo (&lt;5)</button>
+    <button class="filter-btn" onclick="t1ScoreRange('mid',this)">Medio (5–6)</button>
+    <button class="filter-btn" onclick="t1ScoreRange('high',this)">Alto (&gt;6)</button>
+    <span class="filter-label" style="margin-left:1rem">Tendencia 2015→2019</span>
+    <button class="filter-btn active" onclick="t1Trend('all',this)">Todas</button>
+    <button class="filter-btn" onclick="t1Trend('up',this)">Creciente ↑</button>
+    <button class="filter-btn" onclick="t1Trend('down',this)">Decreciente ↓</button>
+    <button class="filter-btn" onclick="t1Trend('stable',this)">Estable →</button>
+  </div>
   <div id="t1-filters" class="filters" style="gap:0.5rem"></div>
   <div class="chart-container">
     <svg id="chart-t1" width="100%" height="480"></svg>
@@ -333,6 +345,16 @@ svg text { font-family:'DM Sans',sans-serif; }
     <button class="filter-btn active" data-grp="both" onclick="p2Group('both',this)">Ambos grupos</button>
     <button class="filter-btn" data-grp="medals" onclick="p2Group('medals',this)">Solo medallistas</button>
     <button class="filter-btn" data-grp="nomedals" onclick="p2Group('nomedals',this)">Solo no medallistas</button>
+    <span class="filter-label" style="margin-left:1rem">Línea de referencia</span>
+    <button class="filter-btn active" onclick="t2RefLine('none',this)">Sin referencia</button>
+    <button class="filter-btn" onclick="t2RefLine('1.5',this)">Paz 1.5</button>
+    <button class="filter-btn" onclick="t2RefLine('2.0',this)">Paz 2.0</button>
+    <button class="filter-btn" onclick="t2RefLine('2.5',this)">Paz 2.5</button>
+    <span class="filter-label" style="margin-left:1rem">Destacar estadístico</span>
+    <button class="filter-btn active" onclick="t2StatHL('all',this)">Todo</button>
+    <button class="filter-btn" onclick="t2StatHL('mediana',this)">Mediana</button>
+    <button class="filter-btn" onclick="t2StatHL('media',this)">Media</button>
+    <button class="filter-btn" onclick="t2StatHL('iqr',this)">Rango IQR</button>
   </div>
   <div class="stats-row" id="t2-stats"></div>
   <div class="chart-container">
@@ -364,6 +386,11 @@ svg text { font-family:'DM Sans',sans-serif; }
     <button class="filter-btn" data-min="5"  onclick="p3MinMed(5,this)">5+</button>
     <button class="filter-btn" data-min="10" onclick="p3MinMed(10,this)">10+</button>
     <button class="filter-btn" data-min="30" onclick="p3MinMed(30,this)">30+</button>
+    <span class="filter-label" style="margin-left:1rem">Felicidad</span>
+    <button class="filter-btn active" onclick="p3Happy('all',this)">Todos</button>
+    <button class="filter-btn" onclick="p3Happy('low',this)">Baja (&lt;5.5)</button>
+    <button class="filter-btn" onclick="p3Happy('mid',this)">Media (5.5–6.5)</button>
+    <button class="filter-btn" onclick="p3Happy('high',this)">Alta (&gt;6.5)</button>
   </div>
   <div class="chart-container">
     <svg id="chart-t3" width="100%" height="540"></svg>
@@ -381,7 +408,7 @@ svg text { font-family:'DM Sans',sans-serif; }
     <p>Cuadrantes divididos por las medianas globales. Superior izquierdo: alta felicidad y alta paz. Haz clic en un país para filtrar el dashboard.</p>
   </div>
   <div class="filters">
-    <span class="filter-label">Filtrar por región</span>
+    <span class="filter-label">Región</span>
     <select class="filter-select" id="p3-region" onchange="drawT4()">
       <option value="all">Todas las regiones</option>
       <option>Western Europe</option>
@@ -396,6 +423,16 @@ svg text { font-family:'DM Sans',sans-serif; }
       <option>Oceania</option>
       <option>Central/Eastern Europe</option>
     </select>
+    <span class="filter-label" style="margin-left:1rem">Cuadrante</span>
+    <button class="filter-btn active" onclick="t4QuadFn('all',this)">Todos</button>
+    <button class="filter-btn" onclick="t4QuadFn('fp',this)">Feliz &amp; Pacífico</button>
+    <button class="filter-btn" onclick="t4QuadFn('fc',this)">Feliz &amp; Conflictivo</button>
+    <button class="filter-btn" onclick="t4QuadFn('ip',this)">Infeliz &amp; Pacífico</button>
+    <button class="filter-btn" onclick="t4QuadFn('ic',this)">Infeliz &amp; Conflictivo</button>
+    <span class="filter-label" style="margin-left:1rem">Medallas</span>
+    <button class="filter-btn active" onclick="t4MedalsFn('all',this)">Todos</button>
+    <button class="filter-btn" onclick="t4MedalsFn('con',this)">Con medallas</button>
+    <button class="filter-btn" onclick="t4MedalsFn('sin',this)">Sin medallas</button>
   </div>
   <div class="chart-container">
     <svg id="chart-t4" width="100%" height="560"></svg>
@@ -411,6 +448,22 @@ svg text { font-family:'DM Sans',sans-serif; }
   <div class="panel-header">
     <h2>OE5: Perfil Multidimensional por País</h2>
     <p>Compara cualquier país de la base de datos en 5 dimensiones: medallas, felicidad, GDP, libertad y paz. Busca y agrega países para comparar sus perfiles.</p>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Cargar preset</span>
+    <button class="filter-btn" onclick="t5Preset('medals')">Top 3 Medallas</button>
+    <button class="filter-btn" onclick="t5Preset('happiness')">Top 3 Felicidad</button>
+    <button class="filter-btn" onclick="t5Preset('peace')">Top 3 Paz</button>
+    <button class="filter-btn" onclick="t5Preset('clear')" style="border-color:var(--danger);color:var(--danger)">Limpiar</button>
+    <span class="filter-label" style="margin-left:1rem">Destacar eje</span>
+    <select class="filter-select" id="t5-dimHL" onchange="t5DimHLChange()">
+      <option value="none">Ninguno</option>
+      <option value="medals">Medallas</option>
+      <option value="happiness">Felicidad</option>
+      <option value="gdp">GDP</option>
+      <option value="freedom">Libertad</option>
+      <option value="peace">Paz</option>
+    </select>
   </div>
   <div class="filters" id="t5-filters"></div>
   <div class="chart-container" style="margin-top:0.8rem">
@@ -488,7 +541,15 @@ const _state = {
   objHL:   'all',
   p2Year:  'all',
   p2Group: 'both',
-  p3MinMed: 0
+  p3MinMed: 0,
+  t1ScoreRange: 'all',
+  t1Trend:      'all',
+  t2RefLine:    'none',
+  t2StatHL:     'all',
+  p3Happy:      'all',
+  t4Quadrant:   'all',
+  t4Medals:     'all',
+  t5DimHL:      'none'
 };
 
 // ===== CROSS-FILTER STATE =====
@@ -550,6 +611,21 @@ function objHighlight(key, el)  { _state.objHL   = key;    _setActive('objHighli
 function p2Year(yr, el)         { _state.p2Year  = yr;     _setActive('p2Year', el);     drawPanel2(); }
 function p2Group(g, el)         { _state.p2Group = g;      _setActive('p2Group', el);    drawT2(); }
 function p3MinMed(n, el)        { _state.p3MinMed = n;     _setActive('p3MinMed', el);   drawT3(); }
+function t1ScoreRange(v, el)    { _state.t1ScoreRange = v; _setActive('t1ScoreRange', el); drawT1(); }
+function t1Trend(v, el)         { _state.t1Trend = v;      _setActive('t1Trend', el);      drawT1(); }
+function t2RefLine(v, el)       { _state.t2RefLine = v;    _setActive('t2RefLine', el);    drawT2(); }
+function t2StatHL(v, el)        { _state.t2StatHL = v;     _setActive('t2StatHL', el);     drawT2(); }
+function p3Happy(v, el)         { _state.p3Happy = v;      _setActive('p3Happy', el);      drawT3(); }
+function t4QuadFn(v, el)        { _state.t4Quadrant = v;   _setActive('t4QuadFn', el);     drawT4(); }
+function t4MedalsFn(v, el)      { _state.t4Medals = v;     _setActive('t4MedalsFn', el);   drawT4(); }
+function t5DimHLChange()        { _state.t5DimHL = document.getElementById('t5-dimHL')?.value || 'none'; drawT5(); }
+function t5Preset(type) {
+  if (type === 'clear') { _t5selected.clear(); drawT5(); return; }
+  if (type === 'medals')    [...ALL_COUNTRY_DATA].filter(d => d.medals > 0).sort((a,b) => b.medals    - a.medals   ).slice(0,3).forEach(d => _t5selected.add(d.country));
+  if (type === 'happiness') [...ALL_COUNTRY_DATA].sort((a,b) => b.happiness - a.happiness).slice(0,3).forEach(d => _t5selected.add(d.country));
+  if (type === 'peace')     [...ALL_COUNTRY_DATA].filter(d => d.peace > 0).sort((a,b) => a.peace - b.peace).slice(0,3).forEach(d => _t5selected.add(d.country));
+  drawT5();
+}
 
 // ===== TAB NAVIGATION =====
 const _drawFns = [drawDesc, drawObj, drawT1, drawT2, drawT3, drawT4, drawT5];
@@ -577,6 +653,30 @@ function drawDesc() {}
 // ===== T1: LINE CHART =====
 function drawT1() {
   const allRegions = [...new Set(T1_DATA.map(d=>d.Region))];
+
+  // Compute per-region stats for secondary filters
+  const regionStats = {};
+  allRegions.forEach(r => {
+    const rd   = T1_DATA.filter(d => d.Region === r);
+    const avg  = d3.mean(rd, d => d.s);
+    const s15  = (rd.find(d => d.Year === 2015) || rd[0]).s;
+    const s19  = (rd.find(d => d.Year === 2019) || rd[rd.length-1]).s;
+    regionStats[r] = { avg, delta: s19 - s15 };
+  });
+  const scorePassFn = r => {
+    const { avg } = regionStats[r];
+    if (_state.t1ScoreRange === 'low')  return avg < 5;
+    if (_state.t1ScoreRange === 'mid')  return avg >= 5 && avg <= 6;
+    if (_state.t1ScoreRange === 'high') return avg > 6;
+    return true;
+  };
+  const trendPassFn = r => {
+    const { delta } = regionStats[r];
+    if (_state.t1Trend === 'up')     return delta > 0.1;
+    if (_state.t1Trend === 'down')   return delta < -0.1;
+    if (_state.t1Trend === 'stable') return delta >= -0.1 && delta <= 0.1;
+    return true;
+  };
 
   // Region toggle globals
   window._t1Toggle = r => { if(_t1selected.has(r)) _t1selected.delete(r); else _t1selected.add(r); drawT1(); };
@@ -624,6 +724,7 @@ function drawT1() {
   const line = d3.line().x(d=>x(d.Year)).y(d=>y(d.s)).curve(d3.curveMonotoneX);
   allRegions.forEach((r,i) => {
     if (!_t1selected.has(r)) return;
+    if (!scorePassFn(r) || !trendPassFn(r)) return;
     const rd = T1_DATA.filter(d=>d.Region===r);
     const hasSel = _sel.region !== null;
     const isReg  = _sel.region === r;
@@ -696,32 +797,56 @@ function drawT2() {
   g.selectAll('.domain').attr('stroke',TC.axis);
   g.selectAll('.tick line').attr('stroke',TC.axis);
 
+  const statHL = _state.t2StatHL;
+  // Per-element visual weights based on highlighted statistic
+  const wOp  = statHL === 'all' || statHL === 'iqr'     ? 1    : 0.15;  // whiskers
+  const bFO  = statHL === 'iqr' ? 0.5 : statHL === 'all' ? 0.2 : 0.05; // box fill-opacity
+  const bSW  = statHL === 'iqr' ? 3.5 : 2;                              // box stroke-width
+  const bSOp = statHL === 'iqr' ? 1   : statHL === 'all' ? 1   : 0.15; // box stroke-opacity
+  const mC   = statHL === 'mediana' ? '#38bdf8' : '#fff';               // median color
+  const mSW  = statHL === 'mediana' ? 4.5 : 2.5;                       // median stroke-width
+  const mOp  = statHL === 'all' || statHL === 'mediana' ? 1   : 0.15;  // median opacity
+  const mnR  = statHL === 'media'   ? 9   : 5;                          // mean dot radius
+  const mnC  = statHL === 'media'   ? '#fbbf24' : null;                 // mean dot override color
+  const mnOp = statHL === 'all' || statHL === 'media'   ? 1   : 0.15;  // mean opacity
+
   groups.forEach((grp,i) => {
-    const s = T2_SUMMARY[grp];
+    const s  = T2_SUMMARY[grp];
     const cx = x(grp) + x.bandwidth()/2;
     const bw = x.bandwidth() * 0.6;
+    const mc = mnC ?? colors[i];
 
     // Whiskers
     g.append('line').attr('x1',cx).attr('x2',cx).attr('y1',y(s.min)).attr('y2',y(s.q1))
-      .attr('stroke',colors[i]).attr('stroke-width',2);
+      .attr('stroke',colors[i]).attr('stroke-width',2).attr('opacity',wOp);
     g.append('line').attr('x1',cx).attr('x2',cx).attr('y1',y(s.q3)).attr('y2',y(s.max))
-      .attr('stroke',colors[i]).attr('stroke-width',2);
+      .attr('stroke',colors[i]).attr('stroke-width',2).attr('opacity',wOp);
     // Caps
     g.append('line').attr('x1',cx-bw/3).attr('x2',cx+bw/3).attr('y1',y(s.min)).attr('y2',y(s.min))
-      .attr('stroke',colors[i]).attr('stroke-width',2);
+      .attr('stroke',colors[i]).attr('stroke-width',2).attr('opacity',wOp);
     g.append('line').attr('x1',cx-bw/3).attr('x2',cx+bw/3).attr('y1',y(s.max)).attr('y2',y(s.max))
-      .attr('stroke',colors[i]).attr('stroke-width',2);
-    // Box
+      .attr('stroke',colors[i]).attr('stroke-width',2).attr('opacity',wOp);
+    // Box (IQR)
     g.append('rect').attr('x',cx-bw/2).attr('y',y(s.q3)).attr('width',bw).attr('height',y(s.q1)-y(s.q3))
-      .attr('fill',colors[i]).attr('fill-opacity',0.2).attr('stroke',colors[i]).attr('stroke-width',2).attr('rx',4);
+      .attr('fill',colors[i]).attr('fill-opacity',bFO)
+      .attr('stroke',colors[i]).attr('stroke-width',bSW).attr('stroke-opacity',bSOp).attr('rx',4);
     // Median
     g.append('line').attr('x1',cx-bw/2).attr('x2',cx+bw/2).attr('y1',y(s.median)).attr('y2',y(s.median))
-      .attr('stroke','#fff').attr('stroke-width',2.5);
+      .attr('stroke',mC).attr('stroke-width',mSW).attr('opacity',mOp);
     // Mean dot
-    g.append('circle').attr('cx',cx).attr('cy',y(s.mean)).attr('r',5)
-      .attr('fill',colors[i]).attr('stroke','#fff').attr('stroke-width',1.5);
-
+    g.append('circle').attr('cx',cx).attr('cy',y(s.mean)).attr('r',mnR)
+      .attr('fill',mc).attr('stroke','#fff').attr('stroke-width',1.5).attr('opacity',mnOp);
   });
+
+  // Reference line
+  const refLine = _state.t2RefLine;
+  if (refLine !== 'none') {
+    const rv = parseFloat(refLine);
+    g.append('line').attr('x1',-8).attr('x2',w).attr('y1',y(rv)).attr('y2',y(rv))
+      .attr('stroke','#a78bfa').attr('stroke-width',1.8).attr('stroke-dasharray','7,4').attr('opacity',0.9);
+    g.append('text').attr('x',-12).attr('y',y(rv)+4).attr('text-anchor','end')
+      .attr('fill','#a78bfa').attr('font-size','10px').attr('font-weight',600).text(refLine);
+  }
 
   g.append('text').attr('x',w/2).attr('y',h+45).attr('text-anchor','middle')
     .attr('fill',TC.text2).attr('font-size','11px').text('Overall Peace Score (menor = más pacífico)');
@@ -768,12 +893,17 @@ function drawT3() {
   const gdpValsF = allSorted.map(d=>d.g).sort(d3.ascending);
   const qBounds  = [0,1,2,3].map(qi => d3.quantile(gdpValsF, qi*0.25));
   qBounds.push(Infinity);
+  const happySel = _state.p3Happy;
   const data = allSorted.filter((d,i) => {
     const qi = allSorted.indexOf(d);
     const n  = allSorted.length;
     const bucket = qi < n*0.25 ? 0 : qi < n*0.5 ? 1 : qi < n*0.75 ? 2 : 3;
-    const gdpOk  = gdpQSel === 'all' || bucket === +gdpQSel;
-    return gdpOk && d.m >= minMed;
+    const gdpOk   = gdpQSel === 'all' || bucket === +gdpQSel;
+    const happyOk = happySel === 'all' ||
+                    (happySel === 'low'  && d.h < 5.5) ||
+                    (happySel === 'mid'  && d.h >= 5.5 && d.h <= 6.5) ||
+                    (happySel === 'high' && d.h > 6.5);
+    return gdpOk && d.m >= minMed && happyOk;
   });
   const N = data.length;
 
@@ -932,6 +1062,24 @@ function drawT4() {
 
   const medH = d3.median(T4_DATA, d=>d.h);
   const medP = d3.median(T4_DATA, d=>d.p);
+  const medalSet = new Set(T3_DATA.map(d => d.c));
+  const getQuad  = d => {
+    if (d.h >= medH && d.p <= medP) return 'fp';
+    if (d.h >= medH && d.p >  medP) return 'fc';
+    if (d.h <  medH && d.p <= medP) return 'ip';
+    return 'ic';
+  };
+  const getT4Opacity = d => {
+    const quadOk  = _state.t4Quadrant === 'all' || getQuad(d) === _state.t4Quadrant;
+    const medalOk = _state.t4Medals === 'all' ||
+                    (_state.t4Medals === 'con' && medalSet.has(d.c)) ||
+                    (_state.t4Medals === 'sin' && !medalSet.has(d.c));
+    const passes  = quadOk && medalOk;
+    if (_sel.country) return d.c === _sel.country ? 1 : 0.07;
+    if (_sel.region)  return t4country2region[d.c] === _sel.region && passes ? 0.95 : 0.07;
+    if (rgT4 !== 'all') return t4country2region[d.c] === rgT4 && passes ? 0.95 : 0.07;
+    return passes ? 0.7 : 0.07;
+  };
 
   // Grid
   g.selectAll('.gridy').data(y.ticks(6)).join('line')
@@ -978,12 +1126,7 @@ function drawT4() {
     .attr('cx',d=>x(d.p)).attr('cy',d=>y(d.h))
     .attr('r', d => _sel.country === d.c ? 9 : 5.5)
     .attr('fill',d=>getQuadColor(d))
-    .attr('fill-opacity', d => {
-      if (_sel.country) return d.c === _sel.country ? 1 : 0.1;
-      if (_sel.region)  return t4country2region[d.c] === _sel.region ? 0.95 : 0.1;
-      if (rgT4 !== 'all') return t4country2region[d.c] === rgT4 ? 0.95 : 0.1;
-      return 0.7;
-    })
+    .attr('fill-opacity', d => getT4Opacity(d))
     .attr('stroke', d => _sel.country === d.c ? '#fff' : getQuadColor(d))
     .attr('stroke-width', d => _sel.country === d.c ? 2 : 1)
     .attr('cursor','pointer')
@@ -996,7 +1139,7 @@ function drawT4() {
     })
     .on('mouseout', function(ev,d) {
       d3.select(this).attr('r', _sel.country===d.c ? 9 : 5.5)
-        .attr('fill-opacity', _sel.country ? (d.c===_sel.country ? 1 : 0.1) : (_sel.region ? (t4country2region[d.c]===_sel.region ? 0.95 : 0.1) : (rgT4!=='all' ? (t4country2region[d.c]===rgT4 ? 0.95 : 0.1) : 0.7)));
+        .attr('fill-opacity', getT4Opacity(d));
       document.getElementById('tip-t4').style.display='none';
     })
     .on('click', function(ev,d) {
@@ -1054,12 +1197,13 @@ function drawT5() {
 
   // Axis lines + labels
   dims.forEach((dim,i) => {
-    const a = angleSlice*i - Math.PI/2;
-    const lx = (R+25)*Math.cos(a), ly = (R+25)*Math.sin(a);
+    const a    = angleSlice*i - Math.PI/2;
+    const lx   = (R+25)*Math.cos(a), ly = (R+25)*Math.sin(a);
+    const isHL = _state.t5DimHL === dim.key;
     g.append('line').attr('x1',0).attr('y1',0).attr('x2',R*Math.cos(a)).attr('y2',R*Math.sin(a))
-      .attr('stroke',TC.axis).attr('stroke-width',1);
+      .attr('stroke', isHL ? '#fbbf24' : TC.axis).attr('stroke-width', isHL ? 2.5 : 1);
     const axLabel = g.append('text').attr('x',lx).attr('y',ly+4).attr('text-anchor','middle')
-      .attr('fill',TC.text2).attr('font-size','11px').attr('font-weight',600)
+      .attr('fill', isHL ? '#fbbf24' : TC.text2).attr('font-size','11px').attr('font-weight', isHL ? 700 : 600)
       .attr('cursor','pointer').text(dim.label);
     axLabel.on('mouseover', function(ev) {
         const tip = document.getElementById('tip-t5');
@@ -1093,14 +1237,15 @@ function drawT5() {
         .attr('points',pts.map(p=>p.join(',')).join(' '))
         .attr('fill',color).attr('fill-opacity',0.1).attr('stroke',color).attr('stroke-width',2.5);
       pts.forEach((p,i) => {
-        const dim    = dims[i];
-        const rawVal = country[dim.key] || 0;
-        const label  = dim.invert
+        const dim     = dims[i];
+        const isDimHL = _state.t5DimHL === dim.key;
+        const rawVal  = country[dim.key] || 0;
+        const label   = dim.invert
           ? `${dim.label}: ${rawVal.toFixed ? rawVal.toFixed(3) : rawVal} (menor = mejor)`
           : `${dim.label}: ${dim.key==='medals' ? rawVal : (rawVal.toFixed ? rawVal.toFixed(3) : rawVal)}`;
         g.append('circle').attr('class','radar-dot')
-          .attr('cx',p[0]).attr('cy',p[1]).attr('r',5)
-          .attr('fill',color).attr('stroke',TC.dotbg).attr('stroke-width',1.5)
+          .attr('cx',p[0]).attr('cy',p[1]).attr('r', isDimHL ? 9 : 5)
+          .attr('fill', isDimHL ? '#fbbf24' : color).attr('stroke',TC.dotbg).attr('stroke-width',1.5)
           .attr('cursor','pointer')
           .on('mouseover', function(ev) {
             d3.select(this).attr('r',9).attr('stroke','#fff').attr('stroke-width',2);
@@ -1149,6 +1294,10 @@ function drawT5() {
       legDiv.appendChild(item);
     });
   }
+
+  // Sync dim highlight select to current state
+  const dimHLEl = document.getElementById('t5-dimHL');
+  if (dimHLEl) dimHLEl.value = _state.t5DimHL;
 
   // Build search UI (rebuilt each draw, state lives in _t5selected)
   const filtersDiv = document.getElementById('t5-filters');
