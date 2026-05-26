@@ -207,6 +207,26 @@ svg text { font-family:'DM Sans',sans-serif; }
 .story-panel p:last-child { margin-bottom: 0; }
 .story-panel strong { color: var(--text); font-weight: 600; }
 .story-panel em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+/* ===== LIGHT MODE OVERRIDES ===== */
+body.light .filter-btn { background:#ffffff; border-color:#64748b; color:#1e293b; }
+body.light .filter-btn:hover { background:#e2e8f0; border-color:#334155; color:#0f172a; }
+body.light .filter-btn.active { background:var(--accent); border-color:var(--accent); color:#ffffff; }
+body.light .filter-label { color:#475569; font-weight:500; }
+body.light .filter-select { background:#ffffff; border-color:#64748b; color:#1e293b; }
+body.light .legend-item { color:#1e293b; }
+body.light .insight-box { background:linear-gradient(135deg,rgba(3,105,161,0.08),rgba(67,56,202,0.06)); border-color:rgba(3,105,161,0.35); color:#1e293b; }
+body.light .insight-box strong { color:#0369a1; }
+body.light .story-panel { background:linear-gradient(135deg,rgba(67,56,202,0.07),rgba(3,105,161,0.05)); border-color:rgba(67,56,202,0.3); border-left-color:#4338ca; color:#1e293b; }
+body.light .story-panel .story-title { color:#4338ca; }
+body.light .story-panel strong { color:#0f172a; }
+body.light .story-panel em { color:#0369a1; }
+body.light .story-btn { border-color:#4338ca; color:#4338ca; background:#ffffff; }
+body.light .story-btn:hover { background:rgba(67,56,202,0.08); }
+body.light .story-btn.open { background:#4338ca; color:#ffffff; }
+body.light .stat-card .stat-label { color:#475569; }
+body.light .stat-card .stat-sub { color:#475569; }
+body.light .tooltip { box-shadow:0 8px 24px rgba(0,0,0,0.12); }
 </style>
 </head>
 <body>
@@ -590,7 +610,12 @@ const REG_DATA = [{"region": "CIS", "happiness": 5.053, "peace": 2.921, "medals"
 const COLORS = ['#38bdf8','#818cf8','#f472b6','#34d399','#fb923c','#fbbf24','#a78bfa','#f87171','#2dd4bf','#e879f9','#60a5fa'];
 
 // Chart theme colors — updated via _updateTC() on theme toggle
-const TC = { grid:'#1e293b', axis:'#2a3548', axdiv:'#475569', text2:'#94a3b8', label:'#cbd5e1', label2:'#e2e8f0', conn:'#334155', dotbg:'#0a0e17' };
+const TC = {
+  grid:'#1e293b', axis:'#2a3548', axdiv:'#475569', text2:'#94a3b8', label:'#cbd5e1', label2:'#e2e8f0', conn:'#334155', dotbg:'#0a0e17',
+  happy:'#38bdf8', cPink:'#f472b6', gold:'#fbbf24', medals:'#fb923c',
+  qfp:'#34d399', qfc:'#fbbf24', qip:'#60a5fa', qic:'#ef4444',
+  refLine:'#a78bfa', hlAxis:'#fbbf24', medianText:'#ffffff'
+};
 function _updateTC() {
   const s = getComputedStyle(document.documentElement);
   TC.grid  = s.getPropertyValue('--cg').trim();
@@ -601,6 +626,21 @@ function _updateTC() {
   TC.label2= s.getPropertyValue('--cl2').trim();
   TC.conn  = s.getPropertyValue('--cc').trim();
   TC.dotbg = s.getPropertyValue('--cb').trim();
+  const li = document.body.classList.contains('light');
+  TC.happy      = li ? '#0369a1' : '#38bdf8';
+  TC.cPink      = li ? '#be185d' : '#f472b6';
+  TC.gold       = li ? '#92400e' : '#fbbf24';
+  TC.medals     = li ? '#c2410c' : '#fb923c';
+  TC.qfp        = li ? '#047857' : '#34d399';
+  TC.qfc        = li ? '#92400e' : '#fbbf24';
+  TC.qip        = li ? '#1d4ed8' : '#60a5fa';
+  TC.qic        = li ? '#b91c1c' : '#ef4444';
+  TC.refLine    = li ? '#4338ca' : '#a78bfa';
+  TC.hlAxis     = li ? '#b45309' : '#fbbf24';
+  TC.medianText = li ? '#0f172a' : '#ffffff';
+  COLORS.splice(0, COLORS.length, ...(li
+    ? ['#0369a1','#4338ca','#be185d','#047857','#c2410c','#92400e','#5b21b6','#b91c1c','#0f766e','#86198f','#1d4ed8']
+    : ['#38bdf8','#818cf8','#f472b6','#34d399','#fb923c','#fbbf24','#a78bfa','#f87171','#2dd4bf','#e879f9','#60a5fa']));
 }
 
 function toggleTheme() {
@@ -693,8 +733,8 @@ function _redrawActive() {
 function _updateFilterBar() {
   const bar = document.getElementById('crossfilter-bar');
   const parts = [];
-  if (_sel.region)  parts.push(`<span style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);padding:0.15rem 0.5rem;border-radius:4px;font-size:0.78rem;color:var(--accent)">📍 Región: <strong>${_sel.region}</strong></span>`);
-  if (_sel.country) parts.push(`<span style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.4);padding:0.15rem 0.5rem;border-radius:4px;font-size:0.78rem;color:var(--gold)">🔍 País: <strong>${_sel.country}</strong></span>`);
+  if (_sel.region)  parts.push(`<span style="background:rgba(3,105,161,0.12);border:1px solid var(--accent);padding:0.15rem 0.5rem;border-radius:4px;font-size:0.78rem;color:var(--accent)">📍 Región: <strong>${_sel.region}</strong></span>`);
+  if (_sel.country) parts.push(`<span style="background:rgba(146,64,14,0.1);border:1px solid var(--gold);padding:0.15rem 0.5rem;border-radius:4px;font-size:0.78rem;color:var(--gold)">🔍 País: <strong>${_sel.country}</strong></span>`);
   if (parts.length) {
     bar.style.display = 'flex';
     bar.innerHTML = `<span style="color:var(--text2);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Filtro cruzado activo</span>${parts.join('')}<button onclick="_clearSel()" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--text2);padding:0.2rem 0.7rem;border-radius:4px;cursor:pointer;font-size:0.75rem;transition:all 0.15s" onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">✕ Limpiar</button>`;
@@ -875,7 +915,7 @@ function drawT2() {
     grpFilter === 'medals'   ? k === 'Con medallas' :
                                k === 'Sin medallas'
   );
-  const colorMap = {'Con medallas': '#38bdf8', 'Sin medallas': '#f472b6'};
+  const colorMap = {'Con medallas': TC.happy, 'Sin medallas': TC.cPink};
   const colors = groups.map(k => colorMap[k]);
 
   const x = d3.scaleBand().domain(groups).range([0,w]).padding(0.4);
@@ -899,11 +939,11 @@ function drawT2() {
   const bFO  = statHL === 'iqr' ? 0.5 : statHL === 'all' ? 0.2 : 0.05; // box fill-opacity
   const bSW  = statHL === 'iqr' ? 3.5 : 2;                              // box stroke-width
   const bSOp = statHL === 'iqr' ? 1   : statHL === 'all' ? 1   : 0.15; // box stroke-opacity
-  const mC   = statHL === 'mediana' ? '#38bdf8' : '#fff';               // median color
+  const mC   = statHL === 'mediana' ? TC.happy : TC.medianText;          // median color
   const mSW  = statHL === 'mediana' ? 4.5 : 2.5;                       // median stroke-width
   const mOp  = statHL === 'all' || statHL === 'mediana' ? 1   : 0.15;  // median opacity
   const mnR  = statHL === 'media'   ? 9   : 5;                          // mean dot radius
-  const mnC  = statHL === 'media'   ? '#fbbf24' : null;                 // mean dot override color
+  const mnC  = statHL === 'media'   ? TC.gold : null;                   // mean dot override color
   const mnOp = statHL === 'all' || statHL === 'media'   ? 1   : 0.15;  // mean opacity
 
   groups.forEach((grp,i) => {
@@ -931,7 +971,7 @@ function drawT2() {
       .attr('stroke',mC).attr('stroke-width',mSW).attr('opacity',mOp);
     // Mean dot
     g.append('circle').attr('cx',cx).attr('cy',y(s.mean)).attr('r',mnR)
-      .attr('fill',mc).attr('stroke','#fff').attr('stroke-width',1.5).attr('opacity',mnOp);
+      .attr('fill',mc).attr('stroke',TC.medianText).attr('stroke-width',1.5).attr('opacity',mnOp);
   });
 
   // Reference line
@@ -939,9 +979,9 @@ function drawT2() {
   if (refLine !== 'none') {
     const rv = parseFloat(refLine);
     g.append('line').attr('x1',-8).attr('x2',w).attr('y1',y(rv)).attr('y2',y(rv))
-      .attr('stroke','#a78bfa').attr('stroke-width',1.8).attr('stroke-dasharray','7,4').attr('opacity',0.9);
+      .attr('stroke',TC.refLine).attr('stroke-width',1.8).attr('stroke-dasharray','7,4').attr('opacity',0.9);
     g.append('text').attr('x',-12).attr('y',y(rv)+4).attr('text-anchor','end')
-      .attr('fill','#a78bfa').attr('font-size','10px').attr('font-weight',600).text(refLine);
+      .attr('fill',TC.refLine).attr('font-size','10px').attr('font-weight',600).text(refLine);
   }
 
   g.append('text').attr('x',w/2).attr('y',h+45).attr('text-anchor','middle')
@@ -957,11 +997,11 @@ function drawT2() {
         const markerX = x(grpKey) + x.bandwidth()/2;
         g.append('line').attr('x1', markerX - x.bandwidth()*0.4).attr('x2', markerX + x.bandwidth()*0.4)
           .attr('y1', y(countryPeace.p)).attr('y2', y(countryPeace.p))
-          .attr('stroke','#fbbf24').attr('stroke-width', 2.5).attr('stroke-dasharray','4,3');
+          .attr('stroke',TC.gold).attr('stroke-width', 2.5).attr('stroke-dasharray','4,3');
         g.append('circle').attr('cx', markerX).attr('cy', y(countryPeace.p)).attr('r', 7)
-          .attr('fill','#fbbf24').attr('stroke','#fff').attr('stroke-width',2).attr('opacity',0.95);
+          .attr('fill',TC.gold).attr('stroke',TC.medianText).attr('stroke-width',2).attr('opacity',0.95);
         g.append('text').attr('x', markerX + x.bandwidth()*0.45 + 6).attr('y', y(countryPeace.p) + 4)
-          .text(_sel.country).attr('fill','#fbbf24').attr('font-size','9px').attr('font-weight',700);
+          .text(_sel.country).attr('fill',TC.gold).attr('font-size','9px').attr('font-weight',700);
       }
     }
   }
@@ -1008,9 +1048,10 @@ function drawT3() {
 
   // Happiness color scale (low=red, high=green)
   const happyExtent = d3.extent(data, d=>d.h);
+  const _liT3 = document.body.classList.contains('light');
   const colorScale = d3.scaleSequential()
     .domain(happyExtent)
-    .interpolator(d3.interpolateRgb('#78350f', '#fef08a'));
+    .interpolator(d3.interpolateRgb('#78350f', _liT3 ? '#0369a1' : '#fef08a'));
 
   // GDP quartile bands background
   const gdpVals = data.map(d=>d.g);
@@ -1132,7 +1173,7 @@ function drawT3() {
   const defs = svg.append('defs');
   const grad = defs.append('linearGradient').attr('id','happyGrad');
   grad.append('stop').attr('offset','0%').attr('stop-color','#78350f');
-  grad.append('stop').attr('offset','100%').attr('stop-color','#fef08a');
+  grad.append('stop').attr('offset','100%').attr('stop-color', _liT3 ? '#0369a1' : '#fef08a');
 
   const legX = W - 280, legY = H - 45;
   svg.append('text').attr('x',legX).attr('y',legY).attr('fill',TC.label2).attr('font-size','12px').attr('font-weight',600).text('Happiness Score');
@@ -1190,10 +1231,10 @@ function drawT4() {
 
   // Quadrant labels
   const qlabels = [
-    {x:x(medP)/2, y:20, t:'Feliz & Pacífico ✓', c:'#34d399'},
-    {x:x(medP)+(w-x(medP))/2, y:20, t:'Feliz & Conflictivo ⚠', c:'#fbbf24'},
+    {x:x(medP)/2, y:20, t:'Feliz & Pacífico ✓', c:TC.qfp},
+    {x:x(medP)+(w-x(medP))/2, y:20, t:'Feliz & Conflictivo ⚠', c:TC.qfc},
     {x:x(medP)/2, y:h-10, t:'Infeliz & Pacífico', c:TC.text2},
-    {x:x(medP)+(w-x(medP))/2, y:h-10, t:'Infeliz & Conflictivo ✗', c:'#ef4444'}
+    {x:x(medP)+(w-x(medP))/2, y:h-10, t:'Infeliz & Conflictivo ✗', c:TC.qic}
   ];
   qlabels.forEach(ql => {
     g.append('text').attr('x',ql.x).attr('y',ql.y).text(ql.t)
@@ -1208,10 +1249,10 @@ function drawT4() {
   g.selectAll('.tick line').attr('stroke',TC.axis);
 
   const getQuadColor = d => {
-    if(d.h>=medH && d.p<=medP) return '#34d399';
-    if(d.h>=medH && d.p>medP) return '#fbbf24';
-    if(d.h<medH && d.p<=medP) return '#60a5fa';
-    return '#ef4444';
+    if(d.h>=medH && d.p<=medP) return TC.qfp;
+    if(d.h>=medH && d.p>medP)  return TC.qfc;
+    if(d.h<medH  && d.p<=medP) return TC.qip;
+    return TC.qic;
   };
 
   const rgT4 = document.getElementById('p3-region')?.value || 'all';
@@ -1297,9 +1338,9 @@ function drawT5() {
     const lx   = (R+25)*Math.cos(a), ly = (R+25)*Math.sin(a);
     const isHL = _state.t5DimHL === dim.key;
     g.append('line').attr('x1',0).attr('y1',0).attr('x2',R*Math.cos(a)).attr('y2',R*Math.sin(a))
-      .attr('stroke', isHL ? '#fbbf24' : TC.axis).attr('stroke-width', isHL ? 2.5 : 1);
+      .attr('stroke', isHL ? TC.hlAxis : TC.axis).attr('stroke-width', isHL ? 2.5 : 1);
     const axLabel = g.append('text').attr('x',lx).attr('y',ly+4).attr('text-anchor','middle')
-      .attr('fill', isHL ? '#fbbf24' : TC.text2).attr('font-size','11px').attr('font-weight', isHL ? 700 : 600)
+      .attr('fill', isHL ? TC.hlAxis : TC.text2).attr('font-size','11px').attr('font-weight', isHL ? 700 : 600)
       .attr('cursor','pointer').text(dim.label);
     axLabel.on('mouseover', function(ev) {
         const tip = document.getElementById('tip-t5');
@@ -1341,7 +1382,7 @@ function drawT5() {
           : `${dim.label}: ${dim.key==='medals' ? rawVal : (rawVal.toFixed ? rawVal.toFixed(3) : rawVal)}`;
         g.append('circle').attr('class','radar-dot')
           .attr('cx',p[0]).attr('cy',p[1]).attr('r', isDimHL ? 9 : 5)
-          .attr('fill', isDimHL ? '#fbbf24' : color).attr('stroke',TC.dotbg).attr('stroke-width',1.5)
+          .attr('fill', isDimHL ? TC.hlAxis : color).attr('stroke',TC.dotbg).attr('stroke-width',1.5)
           .attr('cursor','pointer')
           .on('mouseover', function(ev) {
             d3.select(this).attr('r',9).attr('stroke','#fff').attr('stroke-width',2);
@@ -1495,7 +1536,7 @@ function drawObj() {
 
   const vars   = ['happiness','peace','medals'];
   const labels = ['Felicidad','Paz','Medallas'];
-  const colors = ['#38bdf8','#34d399','#fb923c'];
+  const colors = [TC.happy, TC.qfp, TC.medals];
 
   const y = d3.scaleBand().domain(data.map(d=>d.region)).range([0,h]).padding(0.45);
   const x = d3.scaleLinear().domain([0,1]).range([0,w]);
